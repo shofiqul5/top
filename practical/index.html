@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Computer Science Practical Notebook</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.8;
+        }
+        h1 {
+            text-align: center;
+            color: #1a237e;
+            border-bottom: 3px solid #1a237e;
+            padding-bottom: 12px;
+            margin-bottom: 35px;
+        }
+        .practical {
+            background: white;
+            border-radius: 10px;
+            padding: 25px 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            page-break-inside: avoid;
+        }
+        .practical h2 {
+            color: #283593;
+            border-left: 6px solid #283593;
+            padding-left: 15px;
+            margin-top: 0;
+        }
+        h3 {
+            color: #37474f;
+            margin-top: 20px;
+        }
+        .section-title {
+            background: #e8eaf6;
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        code {
+            background: #eceff1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #bbb;
+        }
+        th {
+            background: #283593;
+            color: white;
+            padding: 10px 12px;
+        }
+        td {
+            padding: 8px 12px;
+        }
+        .output-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+        }
+        .explanation {
+            background: #e8f5e9;
+            padding: 15px 18px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .explanation ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .explanation li {
+            margin-bottom: 4px;
+        }
+        .result-label {
+            font-weight: bold;
+            color: #e65100;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📘 Computer Science Practical Notebook</h1>
+
+<!-- ==================== PRACTICAL NO. 2 ==================== -->
+<div class="practical">
+    <h2>পরীক্ষণ নং - ২</h2>
+    <h3>HTML পেজে টেক্সট এর সাইজ নির্দিষ্ট করা এবং এ্যালাইন করা</h3>
+
+    <p><span class="section-title">তত্ত্ব:</span> HTML ডকুমেন্টের পেজে লেখা টেক্সট এর সাইজ নির্দিষ্ট করা এবং এ্যালাইন করার জন্য font ট্যাগে এট্রিবিউট হিসাবে <code>font align=</code> এবং <code>font size=</code> এর পাশে এলাইনমেন্ট এবং সাইজ সংখ্যায় নির্দিষ্ট করা হয় ।</p>
+
+    <p><span class="section-title">যন্ত্রপাতির ব্যবহার:</span></p>
+    <ol>
+        <li><strong>হার্ডওয়ার:</strong> একটি কম্পিউটার</li>
+        <li><strong>সফটওয়ার:</strong> অপারেটিং সিস্টেম- Windows - 10</li>
+        <li><strong>এডিটিং সফটওয়্যার:</strong> যেমন- নোটপ্যাড ।</li>
+        <li><strong>ব্রাউজিং সফটওয়্যার:</strong> যেমন- গুগলক্রোম অথবা মজিলা ফায়ার ফক্স ।</li>
+    </ol>
+
+    <p><span class="section-title">প্রক্রিয়া অনুসরণ (কার্যপ্রণালী):</span></p>
+    <ol>
+        <li>কম্পিউটার চালু করে ডেস্কটপ এ আসি ।</li>
+        <li>নোটপ্যাড ওপেন করে এতে HTML কোড লিখি । যেমন:</li>
+    </ol>
+
+<pre>&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Jhaudia College&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p align="center"&gt;&lt;b&gt;&lt;font size="5"&gt;Welcome to Jhaudia College&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <p><span class="section-title">ফাইল সংরক্ষণ করা:</span></p>
+    <ol>
+        <li>File মেনুতে ক্লিক করে Save সাব মেনুতে ক্লিক করি । Save As ডায়ালগ বক্স প্রদর্শিত হবে ।</li>
+        <li>File Name বক্সে যে কোন নাম লিখে <code>.html</code> লিখে Desktop সিলেক্ট করে Save বাটনে ক্লিক করে ডকুমেন্টটি সেভ করি । HTML ফাইলটি তৈরী হবে ।</li>
+    </ol>
+
+    <p><span class="section-title"><span class="result-label">ফলাফল:</span></span></p>
+    <div class="output-box">Welcome to Jhaudia College</div>
+
+    <div class="explanation">
+        <p><strong>ব্যাখ্যা:</strong></p>
+        <ul>
+            <li><code>align="center"</code> দ্বারা লেখাটি সেন্টার এ্যালাইন হওয়ার জন্য নির্দিষ্ট করা হয়েছে ।</li>
+            <li><code>&lt;b&gt;</code> দ্বারা লেখাটি বোল্ড হওয়ার জন্য নির্দিষ্ট করা হয়েছে ।</li>
+            <li><code>font size="5"</code> দ্বারা লেখাটির সাইজ নির্দিষ্ট করা হয়েছে ।</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== PRACTICAL NO. 3 ==================== -->
+<div class="practical">
+    <h2>পরীক্ষণ নং - ৩</h2>
+    <h3>HTML পেজে হেডিং ট্যাগের ব্যবহার</h3>
+
+    <p><span class="section-title">তত্ত্ব:</span> HTML ডকুমেন্টে হেডিং একটি গুরুত্বপূর্ণ বিষয়। হেডিংগুলো <code>&lt;h1&gt;</code> থেকে <code>&lt;h6&gt;</code> ট্যাগ দ্বারা নির্দিষ্ট করে দেওয়া হয়। <code>&lt;h1&gt;</code> ট্যাগ ব্যবহার করলে সবচেয়ে বড় হেডিং প্রদর্শিত হয়। আর <code>&lt;h6&gt;</code> ট্যাগ ব্যবহার করলে সবচেয়ে ছোট হেডিং প্রদর্শিত হয়।</p>
+
+    <p><span class="section-title">যন্ত্রপাতির ব্যবহার:</span></p>
+    <ol>
+        <li><strong>হার্ডওয়ার:</strong> একটি কম্পিউটার</li>
+        <li><strong>সফটওয়ার:</strong> অপারেটিং সিস্টেম- Windows - 10</li>
+        <li><strong>এডিটিং সফটওয়্যার:</strong> যেমন- নোটপ্যাড ।</li>
+        <li><strong>ব্রাউজিং সফটওয়্যার:</strong> যেমন- গুগলক্রোম অথবা মজিলা ফায়ার ফক্স ।</li>
+    </ol>
+
+    <p><span class="section-title">প্রক্রিয়া অনুসরণ (কার্যপ্রণালী):</span></p>
+    <ol>
+        <li>কম্পিউটার চালু করে ডেস্কটপ এ আসি ।</li>
+        <li>নোটপ্যাড ওপেন করে এতে HTML কোড লিখি । যেমন:</li>
+    </ol>
+
+<pre>&lt;html&gt;
+&lt;body&gt;
+&lt;h1&gt;This is heading 1&lt;/h1&gt;
+This is normal text (not heading)
+&lt;h2&gt;This is heading 2&lt;/h2&gt;
+&lt;h3&gt;This is heading 3&lt;/h3&gt;
+&lt;h4&gt;This is heading 4&lt;/h4&gt;
+&lt;h5&gt;This is heading 5&lt;/h5&gt;
+&lt;h6&gt;This is heading 6&lt;/h6&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <p><span class="section-title">ফাইল সংরক্ষণ করা:</span></p>
+    <ol>
+        <li>File মেনুতে ক্লিক করে Save সাব মেনুতে ক্লিক করি । Save As ডায়ালগ বক্স প্রদর্শিত হবে ।</li>
+        <li>File Name বক্সে যে কোন নাম লিখে <code>.html</code> লিখে Desktop সিলেক্ট করে Save বাটনে ক্লিক করে ডকুমেন্টটি সেভ করি । HTML ফাইলটি তৈরী হবে ।</li>
+    </ol>
+
+    <p><span class="section-title"><span class="result-label">ফলাফল:</span></span></p>
+    <div class="output-box">This is heading 1
+This is normal text (not heading)
+This is heading 2
+This is heading 3
+This is heading 4
+This is heading 5
+This is heading 6</div>
+
+    <div class="explanation">
+        <p><strong>ব্যাখ্যা:</strong> উল্লিখিত পরীক্ষণটিতে যে সমস্ত ট্যাগ ব্যবহার করা হয়েছে:</p>
+        <table>
+            <tr><th>ট্যাগসমূহ</th><th>বর্ণনা</th></tr>
+            <tr><td><code>&lt;html&gt; &lt;/html&gt;</code></td><td>HTML ডকুমেন্ট নির্দেশ করে।</td></tr>
+            <tr><td><code>&lt;head&gt; &lt;/head&gt;</code></td><td>প্রোগ্রামের head অংশ নির্দেশ করে।</td></tr>
+            <tr><td><code>&lt;title&gt; &lt;/title&gt;</code></td><td>ডকুমেন্টের টাইটেল নির্দেশ করে।</td></tr>
+            <tr><td><code>&lt;body&gt; &lt;/body&gt;</code></td><td>প্রোগ্রামের মূল কনটেন্ট অংশ নির্দেশ করে।</td></tr>
+            <tr><td><code>&lt;h1&gt; &lt;/h1&gt;</code></td><td>হেডার ট্যাগ ১ (সবচেয়ে বড়)</td></tr>
+            <tr><td><code>&lt;h2&gt; &lt;/h2&gt;</code></td><td>হেডার ট্যাগ ২</td></tr>
+            <tr><td><code>&lt;h3&gt; &lt;/h3&gt;</code></td><td>হেডার ট্যাগ ৩</td></tr>
+            <tr><td><code>&lt;h4&gt; &lt;/h4&gt;</code></td><td>হেডার ট্যাগ ৪</td></tr>
+            <tr><td><code>&lt;h5&gt; &lt;/h5&gt;</code></td><td>হেডার ট্যাগ ৫</td></tr>
+            <tr><td><code>&lt;h6&gt; &lt;/h6&gt;</code></td><td>হেডার ট্যাগ ৬ (সবচেয়ে ছোট)</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== PRACTICAL NO. 4 ==================== -->
+<div class="practical">
+    <h2>পরীক্ষণ নং - ৪</h2>
+    <h3>HTML এ টেক্সট ফরমেটিং এর ব্যবহার</h3>
+
+    <p><span class="section-title">তত্ত্ব:</span> আউটপুটকে ফরমেটিং করার জন্য HTML এ বিভিন্ন ধরনের ফরমেটিং রয়েছে। ফরমেটিং বলতে মূলত টেক্সট ফরমেটিংকেই বুঝানো হয়। HTML এ লেখা Bold, Italic, Underline, Subscript, Superscript ইত্যাদি টেক্সট ফরমেটিং এর জন্য <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;u&gt;</code>, <code>&lt;sub&gt;</code>, <code>&lt;sup&gt;</code> ইত্যাদি ট্যাগ ব্যবহৃত হয়।</p>
+
+    <p><span class="section-title">যন্ত্রপাতির ব্যবহার:</span></p>
+    <ol>
+        <li><strong>হার্ডওয়ার:</strong> একটি কম্পিউটার</li>
+        <li><strong>সফটওয়ার:</strong> অপারেটিং সিস্টেম- Windows - 10</li>
+        <li><strong>এডিটিং সফটওয়্যার:</strong> যেমন- নোটপ্যাড ।</li>
+        <li><strong>ব্রাউজিং সফটওয়্যার:</strong> যেমন- গুগলক্রোম অথবা মজিলা ফায়ার ফক্স ।</li>
+    </ol>
+
+    <p><span class="section-title">প্রক্রিয়া অনুসরণ (কার্যপ্রণালী):</span></p>
+    <ol>
+        <li>কম্পিউটার চালু করে ডেস্কটপ এ আসি ।</li>
+        <li>নোটপ্যাড ওপেন করে এতে HTML কোড লিখি । যেমন:</li>
+    </ol>
+
+<pre>&lt;html&gt;
+&lt;body&gt;
+&lt;p&gt;&lt;b&gt;This text is bold&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&lt;u&gt;This text is underline&lt;/u&gt;&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;This text is italic&lt;/i&gt;&lt;/p&gt;
+&lt;p&gt;&lt;small&gt;This text is small&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;This is&lt;sub&gt; subscript&lt;/sub&gt; and &lt;sup&gt;superscript&lt;/sup&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <p><span class="section-title">ফাইল সংরক্ষণ করা:</span></p>
+    <ol>
+        <li>File মেনুতে ক্লিক করে Save সাব মেনুতে ক্লিক করি । Save As ডায়ালগ বক্স প্রদর্শিত হবে ।</li>
+        <li>File Name বক্সে যে কোন নাম লিখে <code>.html</code> লিখে Desktop সিলেক্ট করে Save বাটনে ক্লিক করে ডকুমেন্টটি সেভ করি । HTML ফাইলটি তৈরী হবে ।</li>
+    </ol>
+
+    <p><span class="section-title"><span class="result-label">ফলাফল:</span></span></p>
+    <div class="output-box"><b>This text is bold</b>
+<u>This text is underline</u>
+<i>This text is italic</i>
+<small>This text is small</small>
+This is<sub> subscript</sub> and <sup>superscript</sup></div>
+
+    <div class="explanation">
+        <p><strong>ব্যাখ্যা:</strong></p>
+        <ul>
+            <li>প্রতিটি লাইনকে <code>&lt;p&gt; &lt;/p&gt;</code> ট্যাগের ভেতর রেখে আলাদা প্যারাগ্রাফ হিসেবে এগুলো প্রথমে নির্ধারণ করা হয়েছে ।</li>
+            <li>বোল্ডের জন্য ব্যবহার করা হয়েছে - <code>&lt;b&gt; &lt;/b&gt;</code> ট্যাগ ।</li>
+            <li>আন্ডারলাইনের জন্য ব্যবহার করা হয়েছে - <code>&lt;u&gt; &lt;/u&gt;</code> ট্যাগ ।</li>
+            <li>ইটালিকের জন্য ব্যবহার করা হয়েছে - <code>&lt;i&gt; &lt;/i&gt;</code> ট্যাগ ।</li>
+            <li>স্মল লেটারের জন্য ব্যবহার করা হয়েছে - <code>&lt;small&gt; &lt;/small&gt;</code> ট্যাগ ।</li>
+            <li>সাবস্ক্রিপ্ট এর জন্য ব্যবহার করা হয়েছে - <code>&lt;sub&gt; &lt;/sub&gt;</code> ট্যাগ ।</li>
+            <li>সুপারস্ক্রিপ্ট এর জন্য ব্যবহার করা হয়েছে - <code>&lt;sup&gt; &lt;/sup&gt;</code> ট্যাগ ।</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== PRACTICAL NO. 6 ==================== -->
+<div class="practical">
+    <h2>পরীক্ষণ নং - ৬</h2>
+    <h3>Hello World প্রিন্ট করার প্রোগ্রাম (C Programming)</h3>
+
+    <p><span class="section-title">প্রয়োজনীয় যন্ত্রপাতি:</span> একটি কম্পিউটার ।</p>
+
+    <p><span class="section-title">প্রয়োজনীয় সফটওয়্যার:</span></p>
+    <ol>
+        <li>একটি অপারেটিং সিস্টেম । যেমন: Windows - 10</li>
+        <li>একটি প্রোগ্রামিং ভাষা । যেমন: Dev-C++ Compiler.</li>
+    </ol>
+
+    <p><span class="section-title">যন্ত্রপাতির ব্যবহার:</span></p>
+    <ul>
+        <li>কাজের শুরুতে কম্পিউটারের বৈদ্যুতিক সংযোগ ঠিক আছে কি না তা দেখে নিতে হবে ।</li>
+        <li>বৈদ্যুতিক সংযোগ ঠিক থাকলে কম্পিউটারের পাওয়ার সুইচ অন করে কম্পিউটারটি চালু করতে হবে ।</li>
+        <li>বর্ণিত পরীক্ষণটি সম্পন্ন করার জন্য প্রয়োজনীয় প্রোগ্রামটি চালু করতে হবে ।</li>
+    </ul>
+
+    <p><span class="section-title">প্রক্রিয়া অনুসরণ:</span></p>
+    <ol>
+        <li>Dev-C++ এর উপর ক্লিক করে প্রোগ্রামটি চালু করতে হবে ।</li>
+        <li>File ক্লিক → New ক্লিক → Source File নির্বাচন করি ।</li>
+        <li>কোড এডিটরে প্রয়োজনীয় কোড লিখতে হবে ।</li>
+    </ol>
+
+<pre>#include&lt;stdio.h&gt;
+int main()
+{
+    printf("Hello World!");
+    return 0;
+}</pre>
+
+    <p><span class="section-title">ফাইল সংরক্ষণ করা:</span> File ক্লিক → Save ক্লিক → File Name বক্সে যে কোন নাম লিখে <code>.c</code> লিখতে হবে । → Desktop সিলেক্ট করে → Save বাটনে ক্লিক করতে হবে । ফাইলটি নির্ধারিত লোকেশনে সেভ হবে ।</p>
+
+    <p><span class="section-title">কম্পাইলার ও রান করা:</span> সেভ করা ফাইলটি ওপেন করতে হবে । কম্পাইলার ও রান করার জন্য Execute ক্লিক করে → Compile &amp; Run ক্লিক করতে হবে ।</p>
+
+    <p><span class="section-title"><span class="result-label">ফলাফল:</span></span></p>
+    <div class="output-box">Hello World!
+
+Process exited after 0.04581 seconds with return value 0
+press any key to continue ---</div>
+
+    <div class="explanation">
+        <p><strong>ব্যাখ্যা:</strong> সি প্রোগ্রামে কোন আউটপুট পাওয়ার জন্য <code>printf()</code> ফাংশন ব্যবহার করা হয় । তাই এই প্রোগ্রামে <code>printf()</code> ফাংশনের মধ্যে <code>Hello World!</code> লেখা হয়েছে । আউটপুট স্ক্রিনে সেটাই প্রিন্ট হয়েছে ।</p>
+    </div>
+</div>
+
+<!-- ==================== PRACTICAL NO. 7 ==================== -->
+<div class="practical">
+    <h2>পরীক্ষণ নং - ৭</h2>
+    <h3>একটি নির্দিষ্ট টেক্সটকে একাধিকবার প্রদর্শনের প্রোগ্রাম (C Programming)</h3>
+
+    <p><span class="section-title">প্রয়োজনীয় যন্ত্রপাতি:</span> একটি কম্পিউটার।</p>
+
+    <p><span class="section-title">প্রয়োজনীয় সফটওয়্যার:</span></p>
+    <ol>
+        <li>একটি অপারেটিং সিস্টেম। যেমন: Windows - 10</li>
+        <li>একটি প্রোগ্রামিং ভাষা। যেমন: Dev-C++ Compiler.</li>
+    </ol>
+
+    <p><span class="section-title">যন্ত্রপাতির ব্যবহার:</span></p>
+    <ul>
+        <li>কাজের শুরুতে কম্পিউটারের বৈদ্যুতিক সংযোগ ঠিক আছে কি না তা দেখে নিতে হবে।</li>
+        <li>বৈদ্যুতিক সংযোগ ঠিক থাকলে কম্পিউটারের পাওয়ার সুইচ অন করে কম্পিউটারটি চালু করতে হবে।</li>
+        <li>বর্ণিত পরীক্ষণটি সম্পন্ন করার জন্য প্রয়োজনীয় প্রোগ্রামটি চালু করতে হবে।</li>
+    </ul>
+
+    <p><span class="section-title">প্রক্রিয়া অনুসরণ:</span></p>
+    <ol>
+        <li>Dev-C++ এর উপর ক্লিক করে প্রোগ্রামটি চালু করতে হবে।</li>
+        <li>File ক্লিক → New ক্লিক → Source File ক্লিক করে নির্বাচন করি।</li>
+        <li>কোড এডিটরে প্রয়োজনীয় কোড লিখতে হবে।</li>
+    </ol>
+
+<pre>#include&lt;stdio.h&gt;
+int main()
+{
+    int i;
+    i = 0;
+    while(i &lt; 5)
+    {
+        printf("I Love Bangladesh. \n");
+        i = i + 1;
+    }
+    return 0;
+}</pre>
+
+    <p><span class="section-title">ফাইল সংরক্ষণ করা:</span> File ক্লিক → Save ক্লিক → File Name বক্সে যে কোন নাম লিখে <code>.c</code> লিখতে হবে। → Desktop সিলেক্ট করে → Save বাটনে ক্লিক করতে হবে। ফাইলটি নির্ধারিত লোকেশনে সেভ হবে।</p>
+
+    <p><span class="section-title">কম্পাইলার ও রান করা:</span> সেভ করা ফাইলটি ওপেন করতে হবে। কম্পাইলার ও রান করার জন্য Execute ক্লিক করে → Compile &amp; Run ক্লিক করতে হবে।</p>
+
+    <p><span class="section-title"><span class="result-label">ফলাফল:</span></span></p>
+    <div class="output-box">I Love Bangladesh.
+I Love Bangladesh.
+I Love Bangladesh.
+I Love Bangladesh.
+I Love Bangladesh.
+
+Process exited after 0.04966 seconds with return value 0
+press any key to continue---</div>
+
+    <div class="explanation">
+        <p><strong>ব্যাখ্যা:</strong></p>
+        <ul>
+            <li><code>#include&lt;stdio.h&gt;</code> লাইনটি প্রতিটি প্রোগ্রামের প্রথম লাইন হিসেবে বসাতে হয়। stdio অর্থ standard input output.</li>
+            <li><code>main()</code> একটি ফাংশন। যখন প্রোগ্রাম রান শুরু করা হয় তখন <code>main()</code> ফাংশনটি প্রথমেই নির্বাহিত হয়।</li>
+            <li><code>{</code> হলো শুরু বন্ধনী এবং <code>}</code> হলো শেষ বন্ধনী।</li>
+            <li>ফলাফল প্রদর্শনের জন্য <code>printf()</code> ফাংশন ব্যবহৃত হয়েছে।</li>
+            <li>প্রোগ্রামটিতে <code>while</code> লুপ ব্যবহার করা হয়েছে। লুপটি শুরু হয়েছে <code>i=0</code> থেকে এবং এতে <code>(i&lt;5)</code> শর্ত দেওয়া হয়েছে। ফলে লুপটির পাঁচবার পুনরাবৃত্তি ঘটবে। প্রতিবার "I Love Bangladesh" প্রিন্ট হবে।</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+  </html>
