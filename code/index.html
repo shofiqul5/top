@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOTP Authenticator</title>
+<style>
+  /* ── REPLACE THIS ── */
+  /* SUPABASE_FUNCTION_URL = তোমার Supabase Edge Function URL */
+  /* উদাহরণ: https://xxxx.supabase.co/functions/v1/totp-bot */
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg:       #0a0f1e;
+    --surface:  #111827;
+    --card:     #1a2235;
+    --border:   #1e2d45;
+    --accent:   #3b82f6;
+    --accent2:  #06b6d4;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --danger:   #ef4444;
+    --success:  #22c55e;
+    --radius:   14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+  /* ── LOGIN ── */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: radial-gradient(ellipse at 60% 20%, #1e3a5f33 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, #06b6d422 0%, transparent 50%);
+  }
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%; max-width: 400px;
+    box-shadow: 0 24px 64px #00000060;
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 32px;
+  }
+  .login-logo .icon {
+    font-size: 48px; display: block; margin-bottom: 12px;
+    filter: drop-shadow(0 0 16px #3b82f660);
+  }
+  .login-logo h1 { font-size: 22px; font-weight: 700; }
+  .login-logo p  { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+  .field input {
+    width: 100%; padding: 12px 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-size: 14px;
+    outline: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+
+  .btn {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 10px; color: #fff;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: opacity .2s, transform .1s;
+  }
+  .btn:hover   { opacity: .9; }
+  .btn:active  { transform: scale(.98); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .err-msg { margin-top: 14px; color: var(--danger); font-size: 13px; text-align: center; }
+  .bot-link { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .bot-link a { color: var(--accent); text-decoration: none; }
+
+  /* ── DASHBOARD ── */
+  .dashboard { display: none; }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+  .topbar-brand span { font-size: 22px; }
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+  .logout-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 7px 14px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .refresh-btn {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text); padding: 7px 14px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; transition: background .2s;
+  }
+  .refresh-btn:hover { background: var(--border); }
+
+  .main { max-width: 640px; margin: 0 auto; padding: 32px 20px; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
+
+  .code-grid { display: grid; gap: 14px; }
+  .code-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 22px;
+    position: relative; overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .code-card:hover { border-color: #2d3f5a; box-shadow: 0 4px 20px #00000030; }
+  .code-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+  .code-label { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .code-otp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px; font-weight: 700; letter-spacing: 6px;
+    color: var(--text); cursor: pointer; user-select: none;
+    transition: color .15s;
+  }
+  .code-otp:hover { color: var(--accent); }
+  .code-otp.copied { color: var(--success); }
+  .code-meta {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 12px;
+  }
+  .timer-bar-wrap {
+    flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .timer-bar {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s linear;
+  }
+  .timer-bar.warn { background: #f59e0b; }
+  .timer-bar.crit { background: var(--danger); }
+  .timer-txt { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; min-width: 28px; text-align: right; }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--muted);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state p { font-size: 14px; }
+
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px; gap: 10px; color: var(--muted);
+  }
+  .spinner {
+    width: 20px; height: 20px; border: 2px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--success); color: #fff; padding: 10px 20px;
+    border-radius: 8px; font-size: 13px; opacity: 0;
+    transition: opacity .3s, transform .3s; pointer-events: none; z-index: 99;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .login-box { padding: 28px 20px; }
+    .code-otp { font-size: 28px; letter-spacing: 4px; }
+    .topbar { padding: 12px 16px; }
+    .main { padding: 20px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="icon">🔐</span>
+      <h1>TOTP Authenticator</h1>
+      <p>Email দিয়ে লগিন করুন</p>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">লগিন করুন</button>
+    <div class="err-msg" id="loginErr"></div>
+    <div class="bot-link">
+      একাউন্ট নেই? <a href="https://t.me/YOUR_BOT_USERNAME" target="_blank">Telegram Bot থেকে রেজিস্টার করুন</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <div class="topbar-brand"><span>🔐</span> TOTP</div>
+    <div class="topbar-actions">
+      <button class="refresh-btn" onclick="loadCodes()">🔄 Refresh</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="section-title">আপনার Authenticator কোডসমূহ</div>
+    <div class="code-grid" id="codeGrid">
+      <div class="loading"><div class="spinner"></div> লোড হচ্ছে...</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// ⚠️ এখানে তোমার Supabase Edge Function URL দাও
+const API_BASE = "https://YOUR_PROJECT.supabase.co/functions/v1/YOUR_FUNCTION_NAME";
+// ══════════════════════════════════════════════════════
+
+let sessionToken = null;
+let tickInterval = null;
+let codesData    = [];
+
+// ── Init ────────────────────────────────────────────
+window.onload = () => {
+  const saved = sessionStorage.getItem("totp_token");
+  if (saved) { sessionToken = saved; showDashboard(); loadCodes(); }
+};
+
+// ── Login ───────────────────────────────────────────
+async function doLogin() {
+  const email    = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const btn      = document.getElementById("loginBtn");
+  const err      = document.getElementById("loginErr");
+  err.textContent = "";
+  if (!email || !password) { err.textContent = "Email ও Password দিন।"; return; }
+  btn.disabled = true; btn.textContent = "লগিন হচ্ছে...";
+  try {
+    const res  = await fetch(`${API_BASE}/api/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = data.error === "Account banned" ? "🚫 আপনার একাউন্ট নিষিদ্ধ।" : "❌ " + (data.error || "ভুল Email বা Password।"); return; }
+    sessionToken = data.token;
+    sessionStorage.setItem("totp_token", sessionToken);
+    showDashboard();
+    loadCodes();
+  } catch (_) {
+    err.textContent = "❌ সার্ভারে সংযোগ হচ্ছে না।";
+  } finally {
+    btn.disabled = false; btn.textContent = "লগিন করুন";
+  }
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && document.getElementById("loginPage").style.display !== "none") doLogin();
+});
+
+// ── Show/hide pages ─────────────────────────────────
+function showDashboard() {
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+}
+
+function logout() {
+  sessionStorage.removeItem("totp_token");
+  sessionToken = null;
+  clearInterval(tickInterval);
+  document.getElementById("loginPage").style.display = "";
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+}
+
+// ── Load codes ──────────────────────────────────────
+async function loadCodes() {
+  const grid = document.getElementById("codeGrid");
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div> লোড হচ্ছে...</div>';
+  clearInterval(tickInterval);
+  try {
+    const res  = await fetch(`${API_BASE}/api/codes`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: sessionToken }) });
+    if (res.status === 401) { logout(); return; }
+    if (res.status === 403) { grid.innerHTML = '<div class="empty-state"><div class="icon">🚫</div><p>আপনার একাউন্ট নিষিদ্ধ।</p></div>'; return; }
+    const data = await res.json();
+    codesData  = data.codes || [];
+    renderCodes();
+    startTicker();
+  } catch (_) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>লোড করতে সমস্যা হয়েছে।</p></div>';
+  }
+}
+
+// ── Render ──────────────────────────────────────────
+function renderCodes() {
+  const grid = document.getElementById("codeGrid");
+  if (!codesData.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">🔑</div><p>কোনো কোড সেভ নেই।<br>Telegram Bot থেকে কোড যোগ করুন।</p></div>';
+    return;
+  }
+  grid.innerHTML = codesData.map((c, i) => `
+    <div class="code-card">
+      <div class="code-label">${escHtml(c.label)}</div>
+      <div class="code-otp" id="otp_${i}" onclick="copyCode('${c.otp}', ${i})">${formatOTP(c.otp)}</div>
+      <div class="code-meta">
+        <div class="timer-bar-wrap"><div class="timer-bar" id="bar_${i}"></div></div>
+        <div class="timer-txt" id="timer_${i}"></div>
+      </div>
+    </div>
+  `).join("");
+  updateBars();
+}
+
+function formatOTP(otp) {
+  return otp.slice(0, 3) + " " + otp.slice(3);
+}
+
+function updateBars() {
+  const epoch   = Math.floor(Date.now() / 1000);
+  const remaining = 30 - (epoch % 30);
+  const pct     = (remaining / 30) * 100;
+  codesData.forEach((_, i) => {
+    const bar   = document.getElementById(`bar_${i}`);
+    const timerEl = document.getElementById(`timer_${i}`);
+    if (!bar) return;
+    bar.style.width   = pct + "%";
+    bar.className     = "timer-bar" + (remaining <= 5 ? " crit" : remaining <= 10 ? " warn" : "");
+    if (timerEl) timerEl.textContent = remaining + "s";
+  });
+}
+
+function startTicker() {
+  clearInterval(tickInterval);
+  let lastEpochWindow = Math.floor(Date.now() / 30000);
+  tickInterval = setInterval(() => {
+    updateBars();
+    const nowWindow = Math.floor(Date.now() / 30000);
+    if (nowWindow !== lastEpochWindow) { lastEpochWindow = nowWindow; loadCodes(); }
+  }, 1000);
+}
+
+// ── Copy ────────────────────────────────────────────
+async function copyCode(otp, i) {
+  try { await navigator.clipboard.writeText(otp); } catch (_) {}
+  const el = document.getElementById(`otp_${i}`);
+  if (el) { el.classList.add("copied"); el.textContent = "✓ Copied!"; setTimeout(() => { el.classList.remove("copied"); el.textContent = formatOTP(otp); }, 1500); }
+  showToast("✅ কোড কপি হয়েছে");
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>
