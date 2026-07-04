@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HSC GPA Register — Offline Calculator</title>
+
+<style>
+
+  :root{
+
+    --paper:#FBF7EF;
+
+    --paper-deep:#F3EDDD;
+
+    --line:#DCD2B4;
+
+    --ink:#1C2620;
+
+    --ink-soft:#5B6355;
+
+    --green:#0F3D2E;
+
+    --green-deep:#092A20;
+
+    --red:#B83226;
+
+    --gold:#A9791A;
+
+    --card:#FFFFFF;
+
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --mono: 'SF Mono', Consolas, 'Courier New', monospace;
+
+  }
+
+
+
+  *{box-sizing:border-box;}
+
+  html,body{margin:0;padding:0;}
+
+  body{
+
+    background:
+
+      radial-gradient(circle at 10% 0%, #ffffff 0%, transparent 45%),
+
+      var(--paper);
+
+    color:var(--ink);
+
+    font-family:var(--sans);
+
+    padding:32px 16px 80px;
+
+    -webkit-font-smoothing:antialiased;
+
+  }
+
+
+
+  .sheet{
+
+    max-width:760px;
+
+    margin:0 auto;
+
+    background:var(--card);
+
+    border:1px solid var(--line);
+
+    box-shadow:0 1px 3px rgba(15,61,46,0.06), 0 20px 40px -28px rgba(15,61,46,0.35);
+
+    position:relative;
+
+  }
+
+  .sheet::before{
+
+    content:"";
+
+    position:absolute; top:6px; left:6px; right:6px; bottom:6px;
+
+    border:1px solid var(--line);
+
+    pointer-events:none;
+
+  }
+
+
+
+  /* Letterhead */
+
+  .letterhead{
+
+    padding:30px 40px 22px;
+
+    text-align:center;
+
+    border-bottom:3px double var(--green);
+
+    position:relative;
+
+  }
+
+  .letterhead .rule-top{
+
+    height:4px;
+
+    background:linear-gradient(90deg, var(--green) 0 50%, var(--red) 50% 100%);
+
+    margin:-6px -6px 22px;
+
+  }
+
+  .eyebrow{
+
+    font-family:var(--mono);
+
+    font-size:11px;
+
+    letter-spacing:0.18em;
+
+    text-transform:uppercase;
+
+    color:var(--ink-soft);
+
+    margin:0 0 6px;
+
+  }
+
+  h1{
+
+    font-family:var(--serif);
+
+    font-weight:400;
+
+    font-size:30px;
+
+    margin:0 0 4px;
+
+    color:var(--green-deep);
+
+    letter-spacing:0.01em;
+
+  }
+
+  .subtitle{
+
+    font-size:13px;
+
+    color:var(--ink-soft);
+
+    margin:0;
+
+  }
+
+
+
+  /* Controls */
+
+  .controls{
+
+    padding:24px 40px 8px;
+
+    display:flex;
+
+    gap:18px;
+
+    flex-wrap:wrap;
+
+    align-items:flex-end;
+
+    border-bottom:1px dashed var(--line);
+
+  }
+
+  .field{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+  }
+
+  label{
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.08em;
+
+    color:var(--ink-soft);
+
+    font-weight:600;
+
+  }
+
+  select, input[type="number"], input[type="text"]{
+
+    font-family:var(--sans);
+
+    font-size:14px;
+
+    padding:8px 10px;
+
+    border:1px solid var(--line);
+
+    background:var(--paper);
+
+    color:var(--ink);
+
+    border-radius:2px;
+
+  }
+
+  select:focus, input:focus{
+
+    outline:2px solid var(--green);
+
+    outline-offset:1px;
+
+    border-color:var(--green);
+
+  }
+
+  .mode-toggle{
+
+    display:flex;
+
+    border:1px solid var(--green);
+
+    border-radius:3px;
+
+    overflow:hidden;
+
+  }
+
+  .mode-toggle button{
+
+    font-family:var(--sans);
+
+    font-size:12.5px;
+
+    font-weight:600;
+
+    padding:8px 14px;
+
+    border:none;
+
+    background:var(--card);
+
+    color:var(--green-deep);
+
+    cursor:pointer;
+
+  }
+
+  .mode-toggle button.active{
+
+    background:var(--green);
+
+    color:#fff;
+
+  }
+
+
+
+  /* Register / subject table */
+
+  .register{
+
+    padding:22px 40px 6px;
+
+  }
+
+  .register-head{
+
+    display:grid;
+
+    grid-template-columns:28px 1fr 100px 90px 80px 34px;
+
+    gap:10px;
+
+    font-size:10.5px;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.07em;
+
+    color:var(--ink-soft);
+
+    padding:0 4px 8px;
+
+    border-bottom:1px solid var(--line);
+
+  }
+
+  .row{
+
+    display:grid;
+
+    grid-template-columns:28px 1fr 100px 90px 80px 34px;
+
+    gap:10px;
+
+    align-items:center;
+
+    padding:9px 4px;
+
+    border-bottom:1px solid var(--line);
+
+    background-image:repeating-linear-gradient(transparent, transparent 100%);
+
+  }
+
+  .row .rownum{
+
+    font-family:var(--mono);
+
+    font-size:12px;
+
+    color:var(--ink-soft);
+
+  }
+
+  .row input[type="text"]{ width:100%; }
+
+  .row input[type="number"]{ width:100%; font-family:var(--mono); }
+
+  .row select.grade-select{ width:100%; font-family:var(--mono); }
+
+  .fourth-flag{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:4px;
+
+  }
+
+  .fourth-flag input{ accent-color:var(--red); width:16px; height:16px; }
+
+  .remove-btn{
+
+    background:none;
+
+    border:none;
+
+    color:var(--red);
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    line-height:1;
+
+    padding:4px;
+
+  }
+
+  .remove-btn:hover{ opacity:0.7; }
+  .name-input.locked{
+    background:var(--paper-deep);
+    color:var(--ink-soft);
+    cursor:not-allowed;
+    font-weight:600;
+  }
+  .locked-spacer{ display:inline-block; width:16px; }
+
+  .optional-label{
+    margin-top:20px;
+    padding:0 4px 6px;
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--gold);
+  }
+  .row.optional-row{
+    border-top:1px dashed var(--gold);
+    padding-top:12px;
+  }
+
+
+
+  .add-row-wrap{
+
+    padding:14px 4px 4px;
+
+  }
+
+  .add-row{
+
+    font-family:var(--sans);
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:var(--green-deep);
+
+    background:none;
+
+    border:1px dashed var(--green);
+
+    padding:9px 16px;
+
+    cursor:pointer;
+
+    border-radius:3px;
+
+  }
+
+  .add-row:hover{ background:var(--paper-deep); }
+
+
+
+  .helper-note{
+
+    font-size:11.5px;
+
+    color:var(--ink-soft);
+
+    padding:10px 4px 0;
+
+  }
+
+
+
+  /* Actions */
+
+  .actions{
+
+    padding:24px 40px 6px;
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+  }
+
+  .btn{
+
+    font-family:var(--sans);
+
+    font-size:14px;
+
+    font-weight:700;
+
+    padding:12px 22px;
+
+    border-radius:3px;
+
+    cursor:pointer;
+
+    border:1px solid transparent;
+
+  }
+
+  .btn-primary{
+
+    background:var(--green);
+
+    color:#fff;
+
+  }
+
+  .btn-primary:hover{ background:var(--green-deep); }
+
+  .btn-ghost{
+
+    background:none;
+
+    border:1px solid var(--line);
+
+    color:var(--ink-soft);
+
+  }
+
+  .btn-ghost:hover{ border-color:var(--ink-soft); }
+
+
+
+  /* Results */
+
+  .result{
+
+    margin:26px 40px 34px;
+
+    padding:26px 26px 20px;
+
+    background:var(--paper-deep);
+
+    border:1px solid var(--line);
+
+    display:none;
+
+  }
+
+  .result.show{ display:block; }
+
+
+
+  .result-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
+    margin-bottom:18px;
+
+  }
+
+  .seal{
+
+    width:104px;
+
+    height:104px;
+
+    border-radius:50%;
+
+    border:3px solid var(--red);
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:var(--red);
+
+    position:relative;
+
+    transform:rotate(-6deg);
+
+    flex-shrink:0;
+
+  }
+
+  .seal::before{
+
+    content:"";
+
+    position:absolute; inset:6px;
+
+    border:1px solid var(--red);
+
+    border-radius:50%;
+
+  }
+
+  .seal .gpa-num{
+
+    font-family:var(--serif);
+
+    font-size:26px;
+
+    line-height:1;
+
+    font-weight:700;
+
+  }
+
+  .seal .gpa-label{
+
+    font-family:var(--mono);
+
+    font-size:8.5px;
+
+    letter-spacing:0.1em;
+
+    text-transform:uppercase;
+
+    margin-top:3px;
+
+  }
+
+  .seal.fail{ border-color:var(--ink-soft); color:var(--ink-soft); }
+
+  .seal.fail::before{ border-color:var(--ink-soft); }
+
+
+
+  .result-figures{ flex:1; min-width:220px; }
+
+  .result-figures .line{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:14px;
+
+    padding:5px 0;
+
+    border-bottom:1px dotted var(--line);
+
+  }
+
+  .result-figures .line span:first-child{ color:var(--ink-soft); }
+
+  .result-figures .line span:last-child{ font-family:var(--mono); font-weight:700; }
+
+  .status-pass{ color:var(--green-deep); }
+
+  .status-fail{ color:var(--red); }
+
+
+
+  .breakdown{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:14px;
+
+    font-size:13px;
+
+  }
+
+  .breakdown th{
+
+    text-align:left;
+
+    font-size:10.5px;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.06em;
+
+    color:var(--ink-soft);
+
+    border-bottom:1px solid var(--line);
+
+    padding:6px 8px;
+
+  }
+
+  .breakdown td{
+
+    padding:7px 8px;
+
+    border-bottom:1px solid var(--line);
+
+    font-family:var(--mono);
+
+  }
+
+  .breakdown td.name-cell{ font-family:var(--sans); }
+
+  .breakdown tr.fourth-row td{ color:var(--gold); }
+
+  .breakdown tr.fail-row td{ color:var(--red); }
+
+
+
+  .footnote{
+
+    font-size:11px;
+
+    color:var(--ink-soft);
+
+    margin-top:14px;
+
+    line-height:1.5;
+
+  }
+
+
+
+  .scale-note{
+
+    padding:18px 40px 32px;
+
+    font-size:11.5px;
+
+    color:var(--ink-soft);
+
+    border-top:1px dashed var(--line);
+
+  }
+
+  .scale-note table{
+
+    border-collapse:collapse;
+
+    margin-top:8px;
+
+    font-family:var(--mono);
+
+    font-size:11px;
+
+  }
+
+  .scale-note td{
+
+    padding:3px 12px 3px 0;
+
+  }
+
+
+
+  @media (max-width:600px){
+
+    .letterhead, .controls, .register, .actions, .result, .scale-note{ padding-left:18px; padding-right:18px; }
+
+    .register-head, .row{ grid-template-columns:20px 1fr 78px 0 60px 28px; }
+
+    .register-head span:nth-child(4), .row .fourth-flag{ display:none; }
+
+    h1{ font-size:24px; }
+
+  }
+
+
+
+  .print-row{
+
+    margin-top:20px;
+
+    padding-top:16px;
+
+    border-top:1px dashed var(--line);
+
+    text-align:right;
+
+  }
+
+
+
+  /* Print only the mark sheet (result section) */
+
+  @media print{
+
+    body{ padding:0; background:#fff; }
+
+    .sheet{ border:none; box-shadow:none; max-width:100%; }
+
+    .sheet::before{ display:none; }
+
+    .letterhead, .controls, .register, .actions, .scale-note{ display:none !important; }
+
+    .result{ display:block !important; margin:0; border:none; }
+
+    #printBtn{ display:none !important; }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<div class="sheet">
+
+  <div class="letterhead">
+
+    <div class="rule-top"></div>
+
+    <p class="eyebrow">Bangladesh Education Board · Offline Edition</p>
+
+    <h1>HSC GPA Register</h1>
+
+    <p class="subtitle">Enter subject-wise marks or grades to compute your Higher Secondary Certificate GPA</p>
+
+  </div>
+
+
+
+  <div class="controls">
+
+    <div class="field">
+
+      <label for="groupSelect">Group</label>
+
+      <select id="groupSelect">
+
+        <option value="science">Science</option>
+
+        <option value="humanities">Humanities (Arts)</option>
+
+        <option value="business">Business Studies</option>
+
+        <option value="custom">Custom</option>
+
+      </select>
+
+    </div>
+
+    <div class="field">
+
+      <label>Input Type</label>
+
+      <div class="mode-toggle">
+
+        <button type="button" id="modeMarks" class="active">Marks</button>
+
+        <button type="button" id="modeGrade">Letter Grade</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="register">
+
+    <div class="register-head">
+
+      <span>#</span>
+
+      <span>Subject</span>
+
+      <span>Marks / Grade</span>
+
+      <span>4th Sub.</span>
+
+      <span>GP</span>
+
+      <span></span>
+
+    </div>
+
+    <div id="rows"></div>
+
+    <p class="helper-note">Bangla, English, ICT are fixed general subjects (name locked). The 3 group subjects and the optional 4th subject names can be edited to match your combination. Tick "4th Sub." for your optional subject.</p>
+
+  </div>
+
+
+
+  <div class="actions">
+
+    <button type="button" class="btn btn-primary" id="calcBtn">Calculate GPA</button>
+
+    <button type="button" class="btn btn-ghost" id="resetBtn">Reset</button>
+
+  </div>
+
+
+
+  <div class="result" id="result">
+
+    <div class="result-top">
+
+      <div class="seal" id="seal">
+
+        <div class="gpa-num" id="sealGpa">0.00</div>
+
+        <div class="gpa-label">GPA</div>
+
+      </div>
+
+      <div class="result-figures">
+
+        <div class="line"><span>Overall GPA</span><span id="figGpa">0.00</span></div>
+
+        <div class="line"><span>GPA without 4th Subject</span><span id="figGpaNo4th">0.00</span></div>
+
+        <div class="line"><span>Overall Grade</span><span id="figGrade">—</span></div>
+
+        <div class="line"><span>Result Status</span><span id="figStatus">—</span></div>
+
+      </div>
+
+    </div>
+
+
+
+    <table class="breakdown">
+
+      <thead>
+
+        <tr><th>Subject</th><th>Input</th><th>Letter</th><th>Grade Point</th></tr>
+
+      </thead>
+
+      <tbody id="breakdownBody"></tbody>
+
+    </table>
+
+
+
+    <p class="footnote" id="footnote"></p>
+
+
+
+    <div class="print-row">
+
+      <button type="button" class="btn btn-primary" id="printBtn">🖨 Print Mark Sheet</button>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="scale-note">
+
+    <strong>Grading scale (all Bangladesh boards)</strong>
+
+    <table>
+
+      <tr><td>80–100</td><td>A+</td><td>5.00</td></tr>
+
+      <tr><td>70–79</td><td>A</td><td>4.00</td></tr>
+
+      <tr><td>60–69</td><td>A−</td><td>3.50</td></tr>
+
+      <tr><td>50–59</td><td>B</td><td>3.00</td></tr>
+
+      <tr><td>40–49</td><td>C</td><td>2.00</td></tr>
+
+      <tr><td>33–39</td><td>D</td><td>1.00</td></tr>
+
+      <tr><td>0–32</td><td>F</td><td>0.00</td></tr>
+
+    </table>
+
+    <p style="margin-top:10px;">4th subject rule: only grade points above 2.00 in the optional subject are added as bonus (Bonus = GP − 2.00), then the total is divided by the number of compulsory subjects. A fail (F) in any compulsory subject sets the overall GPA to 0.00; failing the 4th subject only removes the bonus.</p>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+(function(){
+
+  var GRADE_TABLE = [
+
+    {min:80, letter:'A+', point:5.0},
+
+    {min:70, letter:'A',  point:4.0},
+
+    {min:60, letter:'A-', point:3.5},
+
+    {min:50, letter:'B',  point:3.0},
+
+    {min:40, letter:'C',  point:2.0},
+
+    {min:33, letter:'D',  point:1.0},
+
+    {min:0,  letter:'F',  point:0.0}
+
+  ];
+
+  var LETTER_POINTS = {'A+':5.0,'A':4.0,'A-':3.5,'B':3.0,'C':2.0,'D':1.0,'F':0.0};
+
+
+
+  // Each preset has 3 groups:
+
+  //  1) locked:true   -> general/common subjects, name cannot be edited
+
+  //  2) (no flag)      -> main group subjects, name freely editable
+
+  //  3) fourth:true    -> optional 4th subject, name freely editable
+
+  var PRESETS = {
+
+    science: [
+
+      {name:'Bangla', locked:true}, {name:'English', locked:true}, {name:'ICT', locked:true},
+
+      {name:'Physics'}, {name:'Chemistry'}, {name:'Biology'},
+
+      {name:'Higher Mathematics', fourth:true}
+
+    ],
+
+    humanities: [
+
+      {name:'Bangla', locked:true}, {name:'English', locked:true}, {name:'ICT', locked:true},
+
+      {name:'History'}, {name:'Civics'}, {name:'Economics'},
+
+      {name:'Sociology', fourth:true}
+
+    ],
+
+    business: [
+
+      {name:'Bangla', locked:true}, {name:'English', locked:true}, {name:'ICT', locked:true},
+
+      {name:'Accounting'}, {name:'Business Entrepreneurship'}, {name:'Finance & Banking'},
+
+      {name:'Statistics', fourth:true}
+
+    ],
+
+    custom: [
+
+      {name:'Bangla', locked:true}, {name:'English', locked:true}, {name:'ICT', locked:true},
+
+      {name:'Subject 1'}, {name:'Subject 2'}, {name:'Subject 3'},
+
+      {name:'Optional Subject', fourth:true}
+
+    ]
+
+  };
+
+
+
+  var rowsEl = document.getElementById('rows');
+
+  var groupSelect = document.getElementById('groupSelect');
+
+  var modeMarksBtn = document.getElementById('modeMarks');
+
+  var modeGradeBtn = document.getElementById('modeGrade');
+
+  var calcBtn = document.getElementById('calcBtn');
+
+  var resetBtn = document.getElementById('resetBtn');
+
+  var printBtn = document.getElementById('printBtn');
+
+
+
+  var mode = 'marks'; // or 'grade'
+
+  var rowCount = 0;
+
+
+
+  function marksToGrade(marks){
+
+    marks = Math.max(0, Math.min(100, marks));
+
+    for (var i=0;i<GRADE_TABLE.length;i++){
+
+      if (marks >= GRADE_TABLE[i].min) return GRADE_TABLE[i];
+
+    }
+
+    return GRADE_TABLE[GRADE_TABLE.length-1];
+
+  }
+
+
+
+  function makeInputCell(value){
+
+    if (mode === 'marks'){
+
+      return '<input type="number" class="value-input" min="0" max="100" step="1" placeholder="0-100" value="' + (value||'') + '">';
+
+    } else {
+
+      var opts = ['A+','A','A-','B','C','D','F'].map(function(g){
+
+        return '<option value="'+g+'"' + (value===g?' selected':'') + '>'+g+'</option>';
+
+      }).join('');
+
+      return '<select class="grade-select value-input"><option value="">Select</option>' + opts + '</select>';
+
+    }
+
+  }
+
+
+
+  function addRow(name, isFourth, locked){
+
+    rowCount++;
+
+    var div = document.createElement('div');
+
+    div.className = 'row' + (isFourth ? ' optional-row' : '');
+
+    div.dataset.id = rowCount;
+
+    var nameField = locked
+
+      ? '<input type="text" class="name-input locked" value="' + (name || ('Subject ' + rowCount)) + '" readonly>'
+
+      : '<input type="text" class="name-input" value="' + (name || ('Subject ' + rowCount)) + '">';
+
+    var removeBtn = locked ? '<span class="remove-btn locked-spacer"></span>' : '<button type="button" class="remove-btn" title="Remove subject">✕</button>';
+
+    div.innerHTML =
+
+      '<span class="rownum">' + rowCount + '</span>' +
+
+      nameField +
+
+      '<span class="value-cell">' + makeInputCell('') + '</span>' +
+
+      '<span class="fourth-flag"><input type="radio" name="fourthSubject" class="fourth-radio"' + (isFourth ? ' checked' : '') + (locked ? ' disabled' : '') + '></span>' +
+
+      '<span class="gp-cell">—</span>' +
+
+      removeBtn;
+
+    rowsEl.appendChild(div);
+
+
+
+    if (!locked){
+
+      div.querySelector('.remove-btn').addEventListener('click', function(){
+
+        div.remove();
+
+      });
+
+    }
+
+  }
+
+
+
+  function rebuildValueCells(){
+
+    document.querySelectorAll('.row').forEach(function(row){
+
+      var cell = row.querySelector('.value-cell');
+
+      cell.innerHTML = makeInputCell('');
+
+    });
+
+  }
+
+
+
+  function loadPreset(groupKey){
+
+    rowsEl.innerHTML = '';
+
+    rowCount = 0;
+
+    PRESETS[groupKey].forEach(function(subj){
+
+      if (subj.fourth){
+
+        var label = document.createElement('div');
+
+        label.className = 'optional-label';
+
+        label.textContent = 'Optional Subject';
+
+        rowsEl.appendChild(label);
+
+      }
+
+      addRow(subj.name, !!subj.fourth, !!subj.locked);
+
+    });
+
+    hideResult();
+
+  }
+
+
+
+  function hideResult(){
+
+    document.getElementById('result').classList.remove('show');
+
+  }
+
+
+
+  modeMarksBtn.addEventListener('click', function(){
+
+    mode = 'marks';
+
+    modeMarksBtn.classList.add('active');
+
+    modeGradeBtn.classList.remove('active');
+
+    rebuildValueCells();
+
+    hideResult();
+
+  });
+
+  modeGradeBtn.addEventListener('click', function(){
+
+    mode = 'grade';
+
+    modeGradeBtn.classList.add('active');
+
+    modeMarksBtn.classList.remove('active');
+
+    rebuildValueCells();
+
+    hideResult();
+
+  });
+
+
+
+  groupSelect.addEventListener('change', function(){
+
+    loadPreset(groupSelect.value);
+
+  });
+
+
+
+  resetBtn.addEventListener('click', function(){
+
+    groupSelect.value = 'science';
+
+    mode = 'marks';
+
+    modeMarksBtn.classList.add('active');
+
+    modeGradeBtn.classList.remove('active');
+
+    loadPreset('science');
+
+  });
+
+
+
+  function computeRowResult(row){
+
+    var nameInput = row.querySelector('.name-input');
+
+    var valueInput = row.querySelector('.value-input');
+
+    var name = nameInput.value.trim() || 'Subject';
+
+    var isFourth = row.querySelector('.fourth-radio').checked;
+
+
+
+    var letter, point, rawDisplay;
+
+    if (mode === 'marks'){
+
+      var marks = parseFloat(valueInput.value);
+
+      if (isNaN(marks)){ marks = 0; }
+
+      var g = marksToGrade(marks);
+
+      letter = g.letter; point = g.point;
+
+      rawDisplay = isNaN(parseFloat(valueInput.value)) ? '—' : marks;
+
+    } else {
+
+      var sel = valueInput.value;
+
+      letter = sel || 'F';
+
+      point = LETTER_POINTS[letter] !== undefined ? LETTER_POINTS[letter] : 0;
+
+      rawDisplay = sel || '—';
+
+    }
+
+    return {name:name, isFourth:isFourth, letter:letter, point:point, rawDisplay:rawDisplay};
+
+  }
+
+
+
+  calcBtn.addEventListener('click', function(){
+
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row'));
+
+    if (rows.length === 0) return;
+
+
+
+    var results = rows.map(computeRowResult);
+
+
+
+    // update GP cells inline
+
+    rows.forEach(function(row, i){
+
+      row.querySelector('.gp-cell').textContent = results[i].point.toFixed(2);
+
+    });
+
+
+
+    var main = results.filter(function(r){ return !r.isFourth; });
+
+    var fourth = results.find(function(r){ return r.isFourth; });
+
+
+
+    if (main.length === 0){
+
+      alert('Add at least one compulsory subject (not marked as 4th subject).');
+
+      return;
+
+    }
+
+
+
+    var hasFail = main.some(function(r){ return r.letter === 'F'; });
+
+    var sumMain = main.reduce(function(s,r){ return s + r.point; }, 0);
+
+    var bonus = (fourth && fourth.point > 2.0) ? (fourth.point - 2.0) : 0;
+
+
+
+    var gpaWith = hasFail ? 0 : Math.min(5, (sumMain + bonus) / main.length);
+
+    var gpaWithout = hasFail ? 0 : Math.min(5, sumMain / main.length);
+
+
+
+    function overallLetter(gpa){
+
+      if (gpa >= 5.00) return 'A+';
+
+      if (gpa >= 4.00) return 'A';
+
+      if (gpa >= 3.50) return 'A-';
+
+      if (gpa >= 3.00) return 'B';
+
+      if (gpa >= 2.00) return 'C';
+
+      if (gpa >= 1.00) return 'D';
+
+      return 'F';
+
+    }
+
+
+
+    var status = hasFail ? 'Fail' : 'Pass';
+
+
+
+    // render
+
+    document.getElementById('sealGpa').textContent = gpaWith.toFixed(2);
+
+    document.getElementById('seal').className = 'seal' + (hasFail ? ' fail' : '');
+
+    document.getElementById('figGpa').textContent = gpaWith.toFixed(2);
+
+    document.getElementById('figGpaNo4th').textContent = gpaWithout.toFixed(2);
+
+    document.getElementById('figGrade').textContent = hasFail ? 'F' : overallLetter(gpaWith);
+
+    var statusEl = document.getElementById('figStatus');
+
+    statusEl.textContent = status;
+
+    statusEl.className = status === 'Pass' ? 'status-pass' : 'status-fail';
+
+
+
+    var tbody = document.getElementById('breakdownBody');
+
+    tbody.innerHTML = '';
+
+    results.forEach(function(r){
+
+      var tr = document.createElement('tr');
+
+      if (r.isFourth) tr.classList.add('fourth-row');
+
+      if (r.letter === 'F') tr.classList.add('fail-row');
+
+      tr.innerHTML =
+
+        '<td class="name-cell">' + r.name + (r.isFourth ? ' <span style="font-size:10px;">(4th)</span>' : '') + '</td>' +
+
+        '<td>' + r.rawDisplay + '</td>' +
+
+        '<td>' + r.letter + '</td>' +
+
+        '<td>' + r.point.toFixed(2) + '</td>';
+
+      tbody.appendChild(tr);
+
+    });
+
+
+
+    var note = '';
+
+    if (hasFail){
+
+      note = 'One or more compulsory subjects show an F grade, so the overall GPA is set to 0.00 (Fail), regardless of other results.';
+
+    } else if (fourth){
+
+      note = fourth.name + ' is marked as the 4th subject. Bonus applied: (' + fourth.point.toFixed(2) + ' − 2.00) = ' + bonus.toFixed(2) + ' point(s) added before dividing by ' + main.length + ' compulsory subject(s).';
+
+    } else {
+
+      note = 'No subject is marked as the 4th subject, so GPA is a plain average of all ' + main.length + ' subjects entered.';
+
+    }
+
+    document.getElementById('footnote').textContent = note;
+
+
+
+    document.getElementById('result').classList.add('show');
+
+    document.getElementById('result').scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  });
+
+
+
+  printBtn.addEventListener('click', function(){
+
+    window.print();
+
+  });
+
+
+
+  // init
+
+  loadPreset('science');
+
+})();
+
+</script>
+
+
+
+</body>
+
+</html>
+
