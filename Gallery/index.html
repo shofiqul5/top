@@ -6,8 +6,633 @@
     <title>MyGallery</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style> 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
+        /* Intro preloader — same animation style as the profile site,
+           just showing "GALLERY" instead of "ABID" */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        body.dark-mode .preloader {
+            background: #121212;
+        }
+
+        .preloader.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .preloader-name {
+            display: flex;
+            font-size: clamp(2.1rem, 8vw, 5rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            perspective: 600px;
+        }
+
+        .preloader-name span {
+            display: inline-block;
+            color: #e60023;
+            opacity: 0;
+            transform-origin: top center;
+            transform: rotateX(-90deg) translateY(-10px);
+            animation: letterFlip 0.55s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        body.dark-mode .preloader-name span {
+            color: #ff4757;
+        }
+
+        .preloader-name span:nth-child(1) { animation-delay: 0.05s; }
+        .preloader-name span:nth-child(2) { animation-delay: 0.15s; }
+        .preloader-name span:nth-child(3) { animation-delay: 0.25s; }
+        .preloader-name span:nth-child(4) { animation-delay: 0.35s; }
+        .preloader-name span:nth-child(5) { animation-delay: 0.45s; }
+        .preloader-name span:nth-child(6) { animation-delay: 0.55s; }
+        .preloader-name span:nth-child(7) { animation-delay: 0.65s; }
+
+        .preloader-name.exit {
+            animation: slideUpOut 0.55s cubic-bezier(.5,0,.75,0) forwards;
+        }
+
+        .preloader-underline {
+            width: 0;
+            height: 2px;
+            background: #e60023;
+            animation: drawLine 0.4s ease forwards;
+            animation-delay: 1.2s;
+        }
+
+        body.dark-mode .preloader-underline {
+            background: #ff4757;
+        }
+
+        .preloader.exiting .preloader-underline {
+            animation: retractLine 0.35s ease forwards;
+        }
+
+        @keyframes letterFlip {
+            to { opacity: 1; transform: rotateX(0deg) translateY(0); }
+        }
+
+        @keyframes slideUpOut {
+            to { opacity: 0; transform: translateY(-60px); }
+        }
+
+        @keyframes drawLine { to { width: 80px; } }
+        @keyframes retractLine { to { width: 0; } }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0.5rem 0;
+            transition: background-color 0.3s;
+            height: 60px;
+        }
+
+        body.dark-mode header {
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #e60023;
+            font-weight: 700;
+        }
+
+        body.dark-mode .logo h1 {
+            color: #ff4757;
+        }
+
+        .menu-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-btn span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #555;
+            transition: transform 0.35s ease, opacity 0.3s ease, width 0.35s ease, border-radius 0.35s ease, background-color 0.35s ease;
+        }
+
+        body.dark-mode .menu-btn span {
+            background-color: #ddd;
+        }
+
+        .menu-btn:hover span {
+            background-color: #e60023;
+        }
+
+        body.dark-mode .menu-btn:hover span {
+            background-color: #ff4757;
+        }
+
+        .menu-btn.active span {
+            background-color: #e60023;
+        }
+
+        body.dark-mode .menu-btn.active span {
+            background-color: #ff4757;
+        }
+
+        .menu-btn.active span:nth-child(1) {
+            width: 18px;
+            border-radius: 2px;
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .menu-btn.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .menu-btn.active span:nth-child(3) {
+            width: 18px;
+            border-radius: 2px;
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Side Menu Styles */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .side-menu {
+            background-color: #1e1e1e;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        body.dark-mode .menu-header {
+            border-bottom: 1px solid #444;
+        }
+
+        .menu-header h2 {
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        body.dark-mode .menu-header h2 {
+            color: #f0f0f0;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: #777;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        body.dark-mode .close-menu {
+            color: #aaa;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section h3 {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        body.dark-mode .menu-section h3 {
+            color: #aaa;
+        }
+
+        .menu-options {
+            list-style: none;
+        }
+
+        .menu-options li {
+            margin-bottom: 10px;
+        }
+
+        .menu-options a, .menu-options button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px 12px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            color: #333;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: left;
+        }
+
+        body.dark-mode .menu-options a, 
+        body.dark-mode .menu-options button {
+            color: #f0f0f0;
+        }
+
+        .menu-options a:hover, .menu-options button:hover {
+            background-color: #f5f5f5;
+        }
+
+        body.dark-mode .menu-options a:hover,
+        body.dark-mode .menu-options button:hover {
+            background-color: #333;
+        }
+
+        .menu-options i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+        }
+
+        .github-config {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        body.dark-mode .github-config {
+            background-color: #2a2a2a;
+        }
+
+        .config-item {
+            margin-bottom: 8px;
+            display: flex;
+        }
+
+        .config-label {
+            font-weight: 600;
+            min-width: 100px;
+            color: #555;
+        }
+
+        body.dark-mode .config-label {
+            color: #bbb;
+        }
+
+        .config-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        body.dark-mode .config-value {
+            color: #f0f0f0;
+        }
+
+        main {
+            padding: 15px 0 40px;
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        body.dark-mode .loading-indicator {
+            color: #aaa;
+        }
+
+        /* Pinterest-style masonry layout — built with JS-managed columns
+           so items always stack DOWN inside each column instead of
+           drifting sideways the way native CSS columns sometimes do. */
+        .gallery {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 0 8px;
+        }
+
+        .gallery-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .image-card {
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        body.dark-mode .image-card {
+            background-color: #1e1e1e;
+        }
+
+        .image-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .image-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s;
+            border-radius: 5px;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.03);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 12px;
+            border-radius: 5px;
+        }
+
+        .image-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .download-btn {
+            align-self: flex-end;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn:hover {
+            background-color: white;
+            transform: scale(1.1);
+        }
+
+        .download-btn i {
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .image-info {
+            color: white;
+            margin-top: 8px;
+        }
+
+        .image-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .image-date {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .load-more-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .load-more-btn {
+            background-color: #e60023;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-mode .load-more-btn {
+            background-color: #ff4757;
+        }
+
+        .load-more-btn:hover {
+            background-color: #d50c22;
+        }
+
+        body.dark-mode .load-more-btn:hover {
+            background-color: #ff3742;
+        }
+
+        footer {
+            background-color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            color: #555;
+            border-top: 1px solid #eee;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            font-size: 0.85rem;
+        }
+
+        body.dark-mode footer {
+            background-color: #1e1e1e;
+            color: #aaa;
+            border-top: 1px solid #333;
+        }
+
+        /* Responsive column counts - Pinterest style (handled by JS, these
+           values just mirror the breakpoints so header/menu scale nicely) */
+        @media (min-width: 480px) {
+            .gallery {
+                gap: 10px;
+                padding: 0 10px;
+            }
+
+            .gallery-column {
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .gallery {
+                gap: 12px;
+                padding: 0 15px;
+            }
+
+            .gallery-column {
+                gap: 12px;
+            }
+
+            header {
+                height: 70px;
+                padding: 0.7rem 0;
+            }
+
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+
+            .download-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .download-btn i {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .gallery {
+                gap: 15px;
+            }
+
+            .gallery-column {
+                gap: 15px;
+            }
+        }
+
+        /* Animation for lazy loading */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+</style>
 </head>
 <body>
+    <div class="preloader" id="preloader">
+        <div class="preloader-name" id="preloaderName">
+            <span>G</span><span>A</span><span>L</span><span>L</span><span>E</span><span>R</span><span>Y</span>
+        </div>
+        <div class="preloader-underline"></div>
+    </div>
+
     <header>
         <div class="container">
             <div class="header-content">
@@ -15,8 +640,8 @@
                     <h1>MyGallery</h1>
                 </div>
 
-                <button class="menu-btn" id="menuBtn">
-                    <i class="fas fa-ellipsis-v"></i>
+                <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
@@ -40,7 +665,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="https://github.com/shofiqul8008" target="_blank" id="contactLink">
+                    <a href="https://shofiqul3.github.io/#contact" target="_blank" id="contactLink">
                         <i class="fas fa-envelope"></i> Contact
                     </a>
                 </li>
@@ -97,6 +722,453 @@
         </div>
     </footer>
 
-    <script src="script.js"> </script>
+    <script>
+
+        // Configuration - Your GitHub details
+        const GITHUB_USERNAME = 'shofiqul8008';
+        const GITHUB_REPO = 'MyGallery';
+        const IMAGES_FOLDER = 'svg';
+        const IMAGES_PER_PAGE = 20; // Increased for better Pinterest-style loading
+
+        // State variables
+        let currentPage = 1;
+        let allImages = [];
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+        // Masonry column state
+        let columnEls = [];      // the actual column DOM elements currently in #gallery
+        let columnHeights = [];  // running estimated height per column, used to pick the shortest one
+        let numColumns = 0;
+
+        // DOM Elements
+        const gallery = document.getElementById('gallery');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const menuBtn = document.getElementById('menuBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const lightModeBtn = document.getElementById('lightModeBtn');
+        const contactLink = document.getElementById('contactLink');
+        const homepageLink = document.getElementById('homepageLink');
+
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Apply dark mode if previously set
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Intro preloader: letters flip in, underline draws, then everything
+        // slides up and out — same choreography as the profile site.
+        const preloader = document.getElementById('preloader');
+        const preloaderName = document.getElementById('preloaderName');
+        document.body.classList.add('loading');
+
+        setTimeout(() => {
+            preloader.classList.add('exiting');
+            preloaderName.classList.add('exit');
+        }, 1600);
+        setTimeout(() => preloader.classList.add('hide'), 2050);
+        setTimeout(() => {
+            preloader.remove();
+            document.body.classList.remove('loading');
+        }, 2700);
+
+        // Work out how many masonry columns to show at the current width.
+        // Mirrors the old CSS column-count breakpoints.
+        function getDesiredColumnCount() {
+            const w = window.innerWidth;
+            if (w >= 1600) return 7;
+            if (w >= 1280) return 6;
+            if (w >= 1024) return 5;
+            if (w >= 768) return 4;
+            if (w >= 640) return 3;
+            return 2;
+        }
+
+        // Build (or rebuild) the column containers inside #gallery
+        function setupColumns() {
+            numColumns = getDesiredColumnCount();
+            gallery.innerHTML = '';
+            columnEls = [];
+            columnHeights = [];
+            for (let i = 0; i < numColumns; i++) {
+                const col = document.createElement('div');
+                col.className = 'gallery-column';
+                gallery.appendChild(col);
+                columnEls.push(col);
+                columnHeights.push(0);
+            }
+        }
+
+        // Pick the column with the smallest running height, so the gallery
+        // fills DOWN evenly instead of drifting sideways.
+        function shortestColumnIndex() {
+            let minIndex = 0;
+            for (let i = 1; i < columnHeights.length; i++) {
+                if (columnHeights[i] < columnHeights[minIndex]) minIndex = i;
+            }
+            return minIndex;
+        }
+
+        // Function to fetch actual images from GitHub repository
+        async function fetchImagesFromGitHub() {
+            try {
+                // GitHub API URL to get contents of the picture folder
+                const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${IMAGES_FOLDER}`;
+
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`GitHub API error: ${response.status}`);
+                }
+
+                const files = await response.json();
+
+                // Filter for image files
+                const imageFiles = files.filter(file => {
+                    const extension = file.name.toLowerCase().split('.').pop();
+                    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp','svg'].includes(extension);
+                });
+
+                if (imageFiles.length === 0) {
+                    // If no images found in GitHub, fall back to sample images
+                    console.log('No images found in GitHub repository, using sample images');
+                    return generateSampleImages();
+                }
+
+                // Convert GitHub file objects to our image format
+                const images = imageFiles.map((file, index) => {
+                    // Use raw.githubusercontent.com for direct image access
+                    const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/${IMAGES_FOLDER}/${file.name}`;
+
+                    return {
+                        id: index + 1,
+                        url: rawUrl,
+                        downloadUrl: rawUrl, // GitHub raw URL can be downloaded directly
+                        name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+                        date: formatDate(new Date(file.created_at || file.updated_at || Date.now())),
+                        category: 'GitHub Image'
+                    };
+                });
+
+                return images;
+
+            } catch (error) {
+                console.error('Error fetching from GitHub:', error);
+                console.log('Falling back to sample images');
+                // Fall back to sample images if GitHub fetch fails
+                return generateSampleImages();
+            }
+        }
+
+        // Generate sample images with varying aspect ratios (Pinterest style)
+        function generateSampleImages() {
+            const sampleImages = [];
+            const categories = ['Nature', 'City', 'Technology', 'Food', 'Travel', 'Art', 'Animals', 'Sports'];
+
+            for (let i = 1; i <= 40; i++) {
+                const category = categories[Math.floor(Math.random() * categories.length)];
+
+                // Varying aspect ratios for Pinterest-style layout
+                const aspectRatios = [0.66, 0.75, 0.8, 1, 1.2, 1.33, 1.5];
+                const aspectRatio = aspectRatios[Math.floor(Math.random() * aspectRatios.length)];
+                const width = 300 + Math.floor(Math.random() * 200);
+                const height = Math.round(width / aspectRatio);
+
+                sampleImages.push({
+                    id: i,
+                    url: `https://picsum.photos/seed/gallery${i}/${width}/${height}`,
+                    downloadUrl: `https://picsum.photos/seed/gallery${i}/${width}/${height}?download=1`,
+                    name: `${category} ${i}`,
+                    date: formatDate(new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000)),
+                    category: category,
+                    aspectRatio: aspectRatio
+                });
+            }
+
+            return sampleImages;
+        }
+
+        // Format date
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Initialize the gallery
+        async function initGallery() {
+            try {
+                loadingIndicator.style.display = 'block';
+                loadMoreBtn.style.display = 'none';
+
+                setupColumns();
+
+                // Fetch images from GitHub
+                allImages = await fetchImagesFromGitHub();
+
+                loadingIndicator.style.display = 'none';
+
+                if (allImages.length > 0) {
+                    renderGallery();
+                    setupLazyLoading();
+                    loadMoreBtn.style.display = allImages.length > IMAGES_PER_PAGE ? 'inline-block' : 'none';
+                } else {
+                    gallery.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; font-size: 1.2rem;">No images found in the specified GitHub folder.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading images:', error);
+                loadingIndicator.innerHTML = '<div style="color: #e60023; padding: 20px;">Error loading images. Using sample images instead.</div>';
+
+                // Try to load sample images as fallback
+                setupColumns();
+                allImages = generateSampleImages();
+                loadingIndicator.style.display = 'none';
+                renderGallery();
+                setupLazyLoading();
+                loadMoreBtn.style.display = allImages.length > IMAGES_PER_PAGE ? 'inline-block' : 'none';
+            }
+        }
+
+        // Render images to the gallery, placing each new card into the
+        // currently shortest column so growth always happens downward.
+        function renderGallery() {
+            // Reset columns if it's the first page
+            if (currentPage === 1) {
+                setupColumns();
+            }
+
+            // Calculate which images to show
+            const startIndex = (currentPage - 1) * IMAGES_PER_PAGE;
+            const endIndex = startIndex + IMAGES_PER_PAGE;
+            const imagesToShow = allImages.slice(startIndex, endIndex);
+
+            // Create image cards
+            imagesToShow.forEach(image => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'image-card fade-in';
+                imageCard.innerHTML = `
+                    <div class="image-container">
+                        <img 
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='300' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-family='Arial' font-size='14' fill='%23999'%3ELoading...%3C/text%3E%3C/svg%3E"
+                            data-src="${image.url}"
+                            alt="${image.name}"
+                            loading="lazy"
+                            class="gallery-image"
+                        >
+                        <div class="image-overlay">
+                            <button class="download-btn" onclick="downloadImage('${image.downloadUrl}', '${image.name.replace(/\s+/g, '_')}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <div class="image-info">
+                                <div class="image-name"></div>
+                                <div class="image-date">${image.date}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Put this card into whichever column is currently shortest,
+                // and update that column's estimated height using the
+                // image's aspect ratio (falls back to a 4:3-ish default).
+                const targetIndex = shortestColumnIndex();
+                columnEls[targetIndex].appendChild(imageCard);
+
+                const aspectRatio = image.aspectRatio || 0.8; // width / height guess
+                const estimatedHeight = 300 / aspectRatio; // relative units, consistent enough to compare
+                columnHeights[targetIndex] += estimatedHeight;
+            });
+
+            // Hide load more button if all images are displayed
+            if (endIndex >= allImages.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Setup lazy loading for images
+        function setupLazyLoading() {
+            const lazyImages = document.querySelectorAll('.gallery-image:not(.loaded)');
+
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.add('loaded');
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '200px 0px', // Increased for smoother Pinterest-style loading
+                threshold: 0.01
+            });
+
+            lazyImages.forEach(img => imageObserver.observe(img));
+        }
+
+        // Download image function
+        function downloadImage(url, filename) {
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || 'image';
+            link.target = '_blank';
+
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show a temporary notification
+            showNotification('Download started!');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #333;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                animation: fadeIn 0.3s;
+            `;
+
+            if (isDarkMode) {
+                notification.style.backgroundColor = '#444';
+                notification.style.color = '#f0f0f0';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 2000);
+        }
+
+        // Menu functionality
+        function openMenu() {
+            sideMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            menuBtn.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenuHandler() {
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            menuBtn.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Theme functionality
+        function enableDarkMode() {
+            document.body.classList.add('dark-mode');
+            isDarkMode = true;
+            localStorage.setItem('darkMode', 'true');
+        }
+
+        function enableLightMode() {
+            document.body.classList.remove('dark-mode');
+            isDarkMode = false;
+            localStorage.setItem('darkMode', 'false');
+        }
+
+        // Event Listeners
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            renderGallery();
+            setupLazyLoading();
+        });
+
+        menuBtn.addEventListener('click', openMenu);
+        closeMenu.addEventListener('click', closeMenuHandler);
+        menuOverlay.addEventListener('click', closeMenuHandler);
+
+        darkModeBtn.addEventListener('click', () => {
+            enableDarkMode();
+            closeMenuHandler();
+        });
+
+        lightModeBtn.addEventListener('click', () => {
+            enableLightMode();
+            closeMenuHandler();
+        });
+
+        contactLink.href = 'https://shofiqul3.github.io/#contact';
+        homepageLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Refresh the page to go to homepage
+            window.location.href = window.location.origin + window.location.pathname;
+        });
+
+        // Close menu with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMenuHandler();
+            }
+        });
+
+        // Re-flow columns on resize if the ideal column count changed
+        // (rebuilds from scratch, re-appending already-fetched image data
+        // up to the currently loaded page so nothing is lost).
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const desired = getDesiredColumnCount();
+                if (desired !== numColumns && allImages.length > 0) {
+                    const savedPage = currentPage;
+                    currentPage = 1;
+                    setupColumns();
+                    // Re-render everything loaded so far (all pages up to savedPage)
+                    const totalLoaded = Math.min(savedPage * IMAGES_PER_PAGE, allImages.length);
+                    const toShow = allImages.slice(0, totalLoaded);
+                    toShow.forEach(image => {
+                        const imageCard = document.createElement('div');
+                        imageCard.className = 'image-card';
+                        imageCard.innerHTML = `
+                            <div class="image-container">
+                                <img src="${image.url}" alt="${image.name}" class="gallery-image loaded">
+                                <div class="image-overlay">
+                                    <button class="download-btn" onclick="downloadImage('${image.downloadUrl}', '${image.name.replace(/\s+/g, '_')}')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <div class="image-info">
+                                        <div class="image-name"></div>
+                                        <div class="image-date">${image.date}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        const targetIndex = shortestColumnIndex();
+                        columnEls[targetIndex].appendChild(imageCard);
+                        const aspectRatio = image.aspectRatio || 0.8;
+                        columnHeights[targetIndex] += 300 / aspectRatio;
+                    });
+                    currentPage = savedPage;
+                }
+            }, 250);
+        });
+
+        // Initialize the gallery when page loads
+        document.addEventListener('DOMContentLoaded', initGallery);
+ </script>
 </body>
       </html>
