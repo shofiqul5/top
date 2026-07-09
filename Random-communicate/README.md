@@ -7,7 +7,7 @@ A fully **Peer-to-Peer (P2P)** chat application that runs directly in the browse
 
 ## 🌐 Live Demo
 
-[https://shofiqul3.github.io/dev/Random-communicate/](https://shofiqul3.github.io/dev/Random-communicate/)
+[https://shofiqul5.github.io/dev/Random-communicate/](https://shofiqul5.github.io/dev/Random-communicate/)
 
 ## ✨ Features
 
@@ -37,7 +37,7 @@ A fully **Peer-to-Peer (P2P)** chat application that runs directly in the browse
 ## 🚀 How to Use
 
 ### Online Usage
-1. Open the website [idcalling.github.io](https://idcalling.github.io)
+1. Open the website [https://shofiqul5.github.io/dev/Random-communicate/](Type)
 2. Set your username (e.g., `rahim_123`)
 3. Copy your username and share with friends
 4. Connect using your friend's username
