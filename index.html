@@ -65,7 +65,7 @@
             margin-bottom: 30px;
         }
 
-        /* folder card - with hover animation (scale and shadow) */
+        /* folder card */
         li {
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -76,10 +76,9 @@
             min-height: 140px;
             cursor: pointer;
             transition: transform 0.25s ease, box-shadow 0.25s ease;
-            background-color: #2d2b55; /* fallback solid color */
+            background-color: #2d2b55;
         }
 
-        /* hover animation: scale up slightly and lift */
         li:hover {
             transform: translateY(-6px) scale(1.02);
             box-shadow: 0 12px 24px rgba(0,0,0,0.25);
@@ -169,7 +168,7 @@
             opacity: 0.9;
         }
 
-        /* Email button at bottom */
+        /* Email button */
         .email-footer {
             text-align: center;
             margin-top: 20px;
@@ -207,13 +206,14 @@
             padding: 12px;
         }
 
-        /* ============ Loading overlays ============ */
+        /* Loading overlays */
         .loader-inner {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.3rem;
         }
+
         .loading-text {
             display: flex;
             align-items: center;
@@ -222,6 +222,7 @@
             max-width: 100vw;
             padding: 0 1rem;
         }
+
         .letter {
             font-size: clamp(2.6rem, 13vw, 6rem);
             font-weight: 700;
@@ -234,6 +235,7 @@
             position: relative;
             will-change: transform, opacity;
         }
+
         .letter:nth-child(1) { animation-delay: 0s; }
         .letter:nth-child(2) { animation-delay: 0.2s; }
         .letter:nth-child(3) { animation-delay: 0.4s; }
@@ -247,6 +249,7 @@
             65%  { opacity:.45; transform: translateY(5px) skewX(-1deg) scale(0.99); text-shadow:0 0 10px #00ff88,0 0 20px #00ff8844; color:#00cc66; }
             100% { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
         }
+
         @media (prefers-reduced-motion: reduce) {
             .letter { animation: none; opacity: 1; }
         }
@@ -259,6 +262,7 @@
             overflow: hidden;
             position: relative;
         }
+
         .progress-fill {
             height: 100%;
             width: 0%;
@@ -268,7 +272,6 @@
             transition: width .3s cubic-bezier(.4,0,.2,1);
         }
 
-        /* Initial page-entry loader: solid black background */
         #initial-loader {
             position: fixed;
             inset: 0;
@@ -280,12 +283,12 @@
             opacity: 1;
             transition: opacity .5s ease;
         }
+
         #initial-loader.hide {
             opacity: 0;
             pointer-events: none;
         }
 
-        /* Folder-open loader: blurred, semi-transparent so the page stays visible behind it */
         #folder-loader {
             position: fixed;
             inset: 0;
@@ -300,33 +303,24 @@
             visibility: hidden;
             transition: opacity .35s ease;
         }
+
         #folder-loader.active {
             opacity: 1;
             visibility: visible;
         }
 
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            ul {
-                grid-template-columns: 1fr;
-            }
-            .folder-content {
-                padding: 14px 16px;
-            }
-            .folder-icon {
-                font-size: 28px;
-            }
-            .folder-name {
-                font-size: 1rem;
-            }
+            h1 { font-size: 1.8rem; }
+            ul { grid-template-columns: 1fr; }
+            .folder-content { padding: 14px 16px; }
+            .folder-icon { font-size: 28px; }
+            .folder-name { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== Initial page loader (solid black), shown once on first entry ===== -->
+<!-- Initial Page Entry Loader -->
 <div id="initial-loader" role="status" aria-label="Loading">
     <div class="loader-inner">
         <div class="loading-text">
@@ -341,7 +335,7 @@
     </div>
 </div>
 
-<!-- ===== Folder-open loader (blurred background), shown briefly per folder click ===== -->
+<!-- Folder Opening Loader -->
 <div id="folder-loader" role="status" aria-label="Opening folder">
     <div class="loader-inner">
         <div class="loading-text">
@@ -357,12 +351,10 @@
 </div>
 
 <div class="container">
-    <!-- Header -->
     <div class="header-area">
         <h1>📁 Document Folders</h1>
     </div>
 
-    <!-- Search Box -->
     <div class="search-container">
         <input 
             type="text" 
@@ -377,7 +369,6 @@
     <div id="error" class="hidden"></div>
     <ul id="folder-list" class="hidden"></ul>
 
-    <!-- Email button at bottom (as requested) -->
     <div class="email-footer">
         <a href="https://shofiqul5.github.io/#contact" class="email-me-btn" target="_blank" rel="noopener noreferrer">
             Contact Me
@@ -390,13 +381,28 @@
 </div>
 
 <script>
-    // ============ Loader helpers ============
+    // Config
+    const username = 'shofiqul5';
+    const repo = 'top';
+    const excludedFolders = ['.github', '.git', 'css', 'images'];
+    const folderDescriptions = {};
+
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
+    let allFolders = [];
+
+    // DOM Elements
+    const folderListEl = document.getElementById('folder-list');
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const statsEl = document.getElementById('stats');
+    const searchInput = document.getElementById('search-input');
+
     const initialLoader = document.getElementById('initial-loader');
     const initialLoaderFill = document.getElementById('initial-loader-fill');
     const folderLoader = document.getElementById('folder-loader');
     const folderLoaderFill = document.getElementById('folder-loader-fill');
 
-    // Drives a progress-fill bar for `duration` ms, then calls `onDone`.
+    // Helper: Progress Fill Animation
     function animateFill(fillEl, duration, onDone) {
         const start = performance.now();
         function frame(now) {
@@ -412,11 +418,10 @@
         requestAnimationFrame(frame);
     }
 
-    // Initial page loader: stays until folders are fetched AND at least
-    // a random 1-3s has passed, whichever is longer, so it never feels rushed.
+    // Initial loader controller
     let foldersReady = false;
-    const initialMinDuration = 1000 + Math.random() * 2000; // 1s - 3s
     let initialFillDone = false;
+    const initialMinDuration = 800; // Quick initial load
 
     function tryHideInitialLoader() {
         if (foldersReady && initialFillDone) {
@@ -426,98 +431,71 @@
             }, { once: true });
         }
     }
+
     animateFill(initialLoaderFill, initialMinDuration, function () {
         initialFillDone = true;
         tryHideInitialLoader();
     });
 
-    // Folder-open loader: quick blurred overlay shown for a random 1-3s
-    // right before the folder actually opens in a new tab.
+    // FIXED: Folder click handler that bypasses browser pop-up blockers
     function openFolderWithLoader(url) {
+        // 1. Open blank tab immediately while browser recognises user click event
+        const newTab = window.open('about:blank', '_blank');
+
         folderLoader.classList.add('active');
         folderLoaderFill.style.width = '0%';
-        const duration = 1000 + Math.random() * 2000; // 1s - 3s
+        const duration = 600; // Snappy 600ms transition
+
         animateFill(folderLoaderFill, duration, function () {
-            window.open(url, '_blank');
+            // 2. Redirect the target window once animation completes
+            if (newTab) {
+                newTab.location.href = url;
+            } else {
+                window.location.href = url; // Fallback if popup blocker completely blocked newTab
+            }
             folderLoader.classList.remove('active');
         });
     }
-</script>
 
-<script>
-    // --- Configuration ---
-    const username = 'shofiqul5';
-    const repo = 'top';
-    const excludedFolders = ['.github', '.git', 'css', 'images'];
-
-    // Optional custom descriptions for folders
-    const folderDescriptions = {
-        // 'example-folder': 'This is a demo folder'
-    };
-
-    // Base URL for folder images: each folder may contain "folder-image.jpg"
+    // Background Image Helper
     function getFolderImageUrl(folderName) {
         return `https://raw.githubusercontent.com/${username}/${repo}/main/${encodeURIComponent(folderName)}/folder-image.jpg`;
     }
 
-    // --- End Configuration ---
-
-    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
-    let allFolders = [];
-
-    // DOM Elements
-    const folderListEl = document.getElementById('folder-list');
-    const loadingEl = document.getElementById('loading');
-    const errorEl = document.getElementById('error');
-    const statsEl = document.getElementById('stats');
-    const searchInput = document.getElementById('search-input');
-
-    // Helper: apply background image with robust fallback (solid color if image missing)
     function applyFolderBackground(liElement, folderName) {
         const imageUrl = getFolderImageUrl(folderName);
-        const fallbackColor = "#2d2b55"; // solid dark purple/blue fallback
+        const fallbackColor = "#2d2b55";
 
-        // Set initial background color as fallback
         liElement.style.backgroundColor = fallbackColor;
         liElement.style.backgroundImage = "none";
 
-        // Try to load image asynchronously
         const img = new Image();
         img.onload = function() {
-            // Image exists and loaded successfully -> set as background
             liElement.style.backgroundImage = `url('${imageUrl}')`;
             liElement.style.backgroundSize = "cover";
             liElement.style.backgroundPosition = "center";
             liElement.style.backgroundColor = "transparent";
         };
         img.onerror = function() {
-            // Image not found -> keep solid background (no image)
             liElement.style.backgroundColor = fallbackColor;
             liElement.style.backgroundImage = "none";
         };
         img.src = imageUrl;
     }
 
-    // Build folder card with click handler (navigate into folder)
+    // Card Builder
     function createFolderCard(folder) {
         const li = document.createElement('li');
         const folderName = folder.name;
         const description = folderDescriptions[folderName] || '';
 
-        // Apply background (image if exists, else solid)
         applyFolderBackground(li, folderName);
 
-        // Create inner content div
         const contentDiv = document.createElement('div');
         contentDiv.className = 'folder-content';
 
-        // Create anchor-like div but we'll make entire li clickable to open folder
-        // But we also need proper cursor and accessibility. Using button role or link.
-        // We'll attach click event to li that redirects to folder URL.
-        // Also we'll keep inner structure for styling.
         const linkDiv = document.createElement('div');
         linkDiv.className = 'folder-link';
-        // Make it keyboard accessible and clickable
         linkDiv.setAttribute('role', 'link');
         linkDiv.setAttribute('tabindex', '0');
 
@@ -545,32 +523,28 @@
         contentDiv.appendChild(linkDiv);
         li.appendChild(contentDiv);
 
-        // Make entire card clickable -> open folder URL
         const folderUrl = `https://${username}.github.io/${repo}/${folderName}/`;
 
         const openFolder = (e) => {
-            // Prevent event bubbling to avoid conflicts
             e.stopPropagation();
             openFolderWithLoader(folderUrl);
         };
 
         li.addEventListener('click', openFolder);
-        // Also make the inner linkDiv clickable (same)
-        linkDiv.addEventListener('click', openFolder);
-        // Keyboard support: Enter or Space
         li.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 openFolderWithLoader(folderUrl);
             }
         });
+
         li.setAttribute('tabindex', '0');
         li.setAttribute('aria-label', `Open folder ${folderName}`);
 
         return li;
     }
 
-    // Render folders
+    // Render Function
     function renderFolders(folders) {
         folderListEl.innerHTML = '';
 
@@ -585,7 +559,26 @@
         });
     }
 
-    // --- Fetch folders from GitHub API ---
+    // FIXED: Global Search Handler
+    function handleSearch(e) {
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = allFolders.filter(folder => 
+            folder.name.toLowerCase().includes(term) ||
+            (folderDescriptions[folder.name] && folderDescriptions[folder.name].toLowerCase().includes(term))
+        );
+        renderFolders(filtered);
+
+        if (term === '') {
+            statsEl.textContent = `📁 Found ${allFolders.length} folder${allFolders.length !== 1 ? 's' : ''}`;
+        } else {
+            statsEl.textContent = `🔍 Found ${filtered.length} folder${filtered.length !== 1 ? 's' : ''} matching "${term}"`;
+        }
+    }
+
+    // Attach search event listener ONCE globally
+    searchInput.addEventListener('input', handleSearch);
+
+    // Fetch Folders from API
     async function fetchFolders() {
         try {
             const response = await fetch(apiUrl);
@@ -597,15 +590,13 @@
             const data = await response.json();
 
             if (!Array.isArray(data)) {
-                throw new Error('Invalid API response');
+                throw new Error('Invalid API response structure');
             }
 
-            // Filter directories, exclude unwanted
             allFolders = data.filter(item => 
                 item.type === 'dir' && !excludedFolders.includes(item.name)
             );
 
-            // Sort A-Z
             allFolders.sort((a, b) => a.name.localeCompare(b.name));
 
             const count = allFolders.length;
@@ -615,27 +606,6 @@
             folderListEl.classList.remove('hidden');
 
             renderFolders(allFolders);
-
-            // Search handler - simple filtering with live update
-            const searchHandler = (e) => {
-                const term = e.target.value.toLowerCase().trim();
-                const filtered = allFolders.filter(folder => 
-                    folder.name.toLowerCase().includes(term) ||
-                    (folderDescriptions[folder.name] && folderDescriptions[folder.name].toLowerCase().includes(term))
-                );
-                renderFolders(filtered);
-                // Update stats for search results
-                const searchStats = document.getElementById('stats');
-                if (term === '') {
-                    searchStats.textContent = `📁 Found ${allFolders.length} folder${allFolders.length !== 1 ? 's' : ''}`;
-                } else {
-                    searchStats.textContent = `🔍 Found ${filtered.length} folder${filtered.length !== 1 ? 's' : ''} matching "${term}"`;
-                }
-            };
-
-            // Remove previous listener and attach new one
-            searchInput.removeEventListener('input', searchHandler);
-            searchInput.addEventListener('input', searchHandler);
 
             foldersReady = true;
             tryHideInitialLoader();
@@ -647,15 +617,15 @@
             errorEl.innerHTML = `
                 ❌ Failed to load folders<br>
                 <small>${err.message}</small><br>
-                <small>Make sure repository is public: ${username}/${repo}</small>
+                <small>Ensure repository is public: ${username}/${repo}</small>
             `;
             foldersReady = true;
             tryHideInitialLoader();
         }
     }
 
-    // Start loading
+    // Initialize
     fetchFolders();
 </script>
 </body>
-    </html>
+</html>
