@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>My Repository Folders · Shofiqul Islam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-area {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        /* search */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        #search-input:focus {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        /* folder grid */
+        ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            margin-bottom: 30px;
+        }
+
+        /* folder card */
+        li {
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            min-height: 140px;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background-color: #2d2b55;
+        }
+
+        li:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+        }
+
+        /* overlay for text readability */
+        .folder-content {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 16px;
+            padding: 18px 20px;
+            width: 100%;
+            height: 100%;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        li:hover .folder-content {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        .folder-link {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .folder-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .folder-info {
+            flex: 1;
+        }
+
+        .folder-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            word-break: break-word;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .folder-desc {
+            opacity: 0.85;
+            font-weight: normal;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #loading, #error {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            grid-column: 1 / -1;
+        }
+
+        .stats {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Email button */
+        .email-footer {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .email-me-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            color: #667eea;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .email-me-btn:hover {
+            background: #f5f5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            margin-top: 20px;
+            padding: 12px;
+        }
+
+        /* Loading overlays */
+        .loader-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.3rem;
+        }
+
+        .loading-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+            max-width: 100vw;
+            padding: 0 1rem;
+        }
+
+        .letter {
+            font-size: clamp(2.6rem, 13vw, 6rem);
+            font-weight: 700;
+            display: inline-block;
+            line-height: 1;
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            color: #00ff88;
+            text-shadow: 0 0 18px #00ff88, 0 0 36px #00ff8877;
+            animation: glitchPulse 1.8s infinite ease-in-out;
+            position: relative;
+            will-change: transform, opacity;
+        }
+
+        .letter:nth-child(1) { animation-delay: 0s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.4s; }
+        .letter:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes glitchPulse {
+            0%   { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
+            12%  { opacity:1;   transform: translateY(-7px) skewX(-3deg) scale(1.03); text-shadow:3px 0 #ff0044,-3px 0 #00aaff,0 0 32px #00ff88; color:#00ff88; }
+            24%  { opacity:.55; transform: translateY(3px) skewX(2deg) scale(0.98);  text-shadow:-2px 0 #ff0044,2px 0 #00aaff,0 0 15px #00ff88; color:#00ffaa; }
+            40%  { opacity:1;   transform: translateY(-4px) skewX(0deg) scale(1.01); text-shadow:0 0 26px #00ff88,0 0 52px #00ff88; color:#00ff88; }
+            65%  { opacity:.45; transform: translateY(5px) skewX(-1deg) scale(0.99); text-shadow:0 0 10px #00ff88,0 0 20px #00ff8844; color:#00cc66; }
+            100% { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .letter { animation: none; opacity: 1; }
+        }
+
+        .progress-track {
+            width: min(65vw, 230px);
+            height: 3px;
+            background: #0f2a1e;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00cc66, #00ff88);
+            box-shadow: 0 0 10px #00ff88, 0 0 22px #00ff8877;
+            border-radius: 2px;
+            transition: width .3s cubic-bezier(.4,0,.2,1);
+        }
+
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            opacity: 1;
+            transition: opacity .5s ease;
+        }
+
+        #initial-loader.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #folder-loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,10,0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .35s ease;
+        }
+
+        #folder-loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            ul { grid-template-columns: 1fr; }
+            .folder-content { padding: 14px 16px; }
+            .folder-icon { font-size: 28px; }
+            .folder-name { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Initial Page Entry Loader -->
+<div id="initial-loader" role="status" aria-label="Loading">
+    <div class="loader-inner">
+        <div class="loading-text">
+            <span class="letter">a</span>
+            <span class="letter">b</span>
+            <span class="letter">i</span>
+            <span class="letter">d</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="initial-loader-fill"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Folder Opening Loader -->
+<div id="folder-loader" role="status" aria-label="Opening folder">
+    <div class="loader-inner">
+        <div class="loading-text">
+            <span class="letter">a</span>
+            <span class="letter">b</span>
+            <span class="letter">i</span>
+            <span class="letter">d</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="folder-loader-fill"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header-area">
+        <h1>📁 Document Folders</h1>
+    </div>
+
+    <div class="search-container">
+        <input 
+            type="text" 
+            id="search-input" 
+            placeholder="🔍 Search folders by name..."
+            autocomplete="off"
+        >
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div id="loading">⏳ Loading folders...</div>
+    <div id="error" class="hidden"></div>
+    <ul id="folder-list" class="hidden"></ul>
+
+    <div class="email-footer">
+        <a href="https://shofiqul5.github.io/#contact" class="email-me-btn" target="_blank" rel="noopener noreferrer">
+            Contact Me
+        </a>
+    </div>
+
+    <div class="footer-note">
+        ⚡ GitHub API · folders from /shofiqul5/top
+    </div>
+</div>
+
+<script>
+    // Config
+    const username = 'shofiqul5';
+    const repo = 'top';
+    const excludedFolders = ['.github', '.git', 'css', 'images'];
+    const folderDescriptions = {};
+
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
+    let allFolders = [];
+
+    // DOM Elements
+    const folderListEl = document.getElementById('folder-list');
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const statsEl = document.getElementById('stats');
+    const searchInput = document.getElementById('search-input');
+
+    const initialLoader = document.getElementById('initial-loader');
+    const initialLoaderFill = document.getElementById('initial-loader-fill');
+    const folderLoader = document.getElementById('folder-loader');
+    const folderLoaderFill = document.getElementById('folder-loader-fill');
+
+    // Helper: Progress Fill Animation
+    function animateFill(fillEl, duration, onDone) {
+        const start = performance.now();
+        function frame(now) {
+            const elapsed = now - start;
+            const pct = Math.min(100, (elapsed / duration) * 100);
+            fillEl.style.width = pct + '%';
+            if (pct < 100) {
+                requestAnimationFrame(frame);
+            } else if (onDone) {
+                onDone();
+            }
+        }
+        requestAnimationFrame(frame);
+    }
+
+    // Initial loader controller
+    let foldersReady = false;
+    let initialFillDone = false;
+    const initialMinDuration = 800; // Quick initial load
+
+    function tryHideInitialLoader() {
+        if (foldersReady && initialFillDone) {
+            initialLoader.classList.add('hide');
+            initialLoader.addEventListener('transitionend', function () {
+                initialLoader.remove();
+            }, { once: true });
+        }
+    }
+
+    animateFill(initialLoaderFill, initialMinDuration, function () {
+        initialFillDone = true;
+        tryHideInitialLoader();
+    });
+
+    // FIXED: Folder click handler that works on all browsers/devices
+    function openFolderWithLoader(url) {
+        // 1. Open the real URL immediately, synchronously inside the click
+        //    handler. Browsers (especially mobile Safari/Chrome) only allow
+        //    window.open to bypass the popup blocker if it happens directly
+        //    inside the click event — any delay (like waiting for an
+        //    animation to finish) makes them block it or treat it as an
+        //    untrusted redirect.
+        const newTab = window.open(url, '_blank', 'noopener');
+
+        if (!newTab) {
+            // Popup blocked entirely (rare, but some browsers still do this)
+            // -> fall back to navigating the current tab so the user still
+            // reaches the folder.
+            window.location.href = url;
+            return;
+        }
+
+        // 2. Play the loader animation purely as visual feedback on THIS
+        //    page. It no longer controls navigation, so even if it doesn't
+        //    finish or the user closes it, the folder has already opened.
+        folderLoader.classList.add('active');
+        folderLoaderFill.style.width = '0%';
+        const duration = 600;
+
+        animateFill(folderLoaderFill, duration, function () {
+            folderLoader.classList.remove('active');
+        });
+    }
+
+    // Background Image Helper
+    function getFolderImageUrl(folderName) {
+        return `https://raw.githubusercontent.com/${username}/${repo}/main/${encodeURIComponent(folderName)}/folder-image.jpg`;
+    }
+
+    function applyFolderBackground(liElement, folderName) {
+        const imageUrl = getFolderImageUrl(folderName);
+        const fallbackColor = "#2d2b55";
+
+        liElement.style.backgroundColor = fallbackColor;
+        liElement.style.backgroundImage = "none";
+
+        const img = new Image();
+        img.onload = function() {
+            liElement.style.backgroundImage = `url('${imageUrl}')`;
+            liElement.style.backgroundSize = "cover";
+            liElement.style.backgroundPosition = "center";
+            liElement.style.backgroundColor = "transparent";
+        };
+        img.onerror = function() {
+            liElement.style.backgroundColor = fallbackColor;
+            liElement.style.backgroundImage = "none";
+        };
+        img.src = imageUrl;
+    }
+
+    // Card Builder
+    function createFolderCard(folder) {
+        const li = document.createElement('li');
+        const folderName = folder.name;
+        const description = folderDescriptions[folderName] || '';
+
+        applyFolderBackground(li, folderName);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'folder-content';
+
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'folder-link';
+        linkDiv.setAttribute('role', 'link');
+        linkDiv.setAttribute('tabindex', '0');
+
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'folder-icon';
+        iconSpan.textContent = '📂';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'folder-info';
+
+        const nameSpan = document.createElement('div');
+        nameSpan.className = 'folder-name';
+        nameSpan.textContent = folderName;
+        infoDiv.appendChild(nameSpan);
+
+        if (description) {
+            const descSpan = document.createElement('small');
+            descSpan.className = 'folder-desc';
+            descSpan.textContent = description;
+            infoDiv.appendChild(descSpan);
+        }
+
+        linkDiv.appendChild(iconSpan);
+        linkDiv.appendChild(infoDiv);
+        contentDiv.appendChild(linkDiv);
+        li.appendChild(contentDiv);
+
+        const folderUrl = `https://${username}.github.io/${repo}/${folderName}/`;
+
+        const openFolder = (e) => {
+            e.stopPropagation();
+            openFolderWithLoader(folderUrl);
+        };
+
+        li.addEventListener('click', openFolder);
+        li.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openFolderWithLoader(folderUrl);
+            }
+        });
+
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('aria-label', `Open folder ${folderName}`);
+
+        return li;
+    }
+
+    // Render Function
+    function renderFolders(folders) {
+        folderListEl.innerHTML = '';
+
+        if (folders.length === 0) {
+            folderListEl.innerHTML = '<div class="no-results">🔍 No folders found matching your search</div>';
+            return;
+        }
+
+        folders.forEach(folder => {
+            const card = createFolderCard(folder);
+            folderListEl.appendChild(card);
+        });
+    }
+
+    // FIXED: Global Search Handler
+    function handleSearch(e) {
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = allFolders.filter(folder => 
+            folder.name.toLowerCase().includes(term) ||
+            (folderDescriptions[folder.name] && folderDescriptions[folder.name].toLowerCase().includes(term))
+        );
+        renderFolders(filtered);
+
+        if (term === '') {
+            statsEl.textContent = `📁 Found ${allFolders.length} folder${allFolders.length !== 1 ? 's' : ''}`;
+        } else {
+            statsEl.textContent = `🔍 Found ${filtered.length} folder${filtered.length !== 1 ? 's' : ''} matching "${term}"`;
+        }
+    }
+
+    // Attach search event listener ONCE globally
+    searchInput.addEventListener('input', handleSearch);
+
+    // Fetch Folders from API
+    async function fetchFolders() {
+        try {
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid API response structure');
+            }
+
+            allFolders = data.filter(item => 
+                item.type === 'dir' && !excludedFolders.includes(item.name)
+            );
+
+            allFolders.sort((a, b) => a.name.localeCompare(b.name));
+
+            const count = allFolders.length;
+            statsEl.textContent = `📁 Found ${count} folder${count !== 1 ? 's' : ''}`;
+
+            loadingEl.classList.add('hidden');
+            folderListEl.classList.remove('hidden');
+
+            renderFolders(allFolders);
+
+            foldersReady = true;
+            tryHideInitialLoader();
+
+        } catch (err) {
+            console.error('Fetch error:', err);
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            errorEl.innerHTML = `
+                ❌ Failed to load folders<br>
+                <small>${err.message}</small><br>
+                <small>Ensure repository is public: ${username}/${repo}</small>
+            `;
+            foldersReady = true;
+            tryHideInitialLoader();
+        }
+    }
+
+    // Initialize
+    fetchFolders();
+</script>
+</body>
+</html>
