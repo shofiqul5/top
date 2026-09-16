@@ -141,8 +141,12 @@
 
 <div class="wrap">
 
-  <!-- এই পেজটি শুধু নির্ধারিত ডোমেইন থেকে চালানোর জন্য; অন্য কোথাও খুললে সরাসরি একটি সতর্কবার্তা দেখাবে।
-       (মনে রাখবেন: এটা শুধু নিরুৎসাহিতকরণের জন্য, প্রকৃত সুরক্ষা এতে হয় না — নিচের নোট দেখুন) -->
+  <!-- এই পেজটি শুধু নির্ধারিত ডোমেইন থেকে চালানোর জন্য; অন্য কোথাও (localhost, ডাউনলোড করা ফোল্ডার ইত্যাদি) খুললে
+       সরাসরি একটি সতর্কবার্তা দেখাবে এবং ফর্মটাই রেন্ডার হবে না।
+       নোট: এটা শুধু নিরুৎসাহিতকরণের জন্য (UI-level gate)। যে কেউ ব্রাউজার DevTools দিয়ে এই চেকটা বাইপাস করতে
+       পারে যদি সে চায়, কারণ যেকোনো ক্লায়েন্ট-সাইড (JS-based) সুরক্ষা কখনোই ১০০% নিরাপদ হয় না। প্রকৃত ফাইল
+       সুরক্ষার জন্য ফোল্ডারের কনটেন্ট আসলে একটি অথরাইজড সার্ভার/স্টোরেজ থেকে (যেমন Supabase Storage,
+       টোকেন-প্রোটেক্টেড) আনতে হবে, GitHub Pages-এর স্ট্যাটিক ফাইল হিসেবে না রেখে। -->
   <div id="blockedView" class="gate-block" style="display:none;">
     <div class="mark">TOP</div>
     <h1>এই পেজটি এখানে কাজ করবে না</h1>
@@ -190,15 +194,22 @@
 </div>
 
 <script>
-/* ======================= কনফিগারেশন — এখানে আপনার তথ্য বসান ======================= */
+/* ======================= কনফিগারেশন — এখানে আপনার তথ্য বসান =======================
+   1) FUNCTION_URL: Supabase Dashboard > Edge Functions > otp-auth > "Invoke URL" থেকে কপি করুন
+      ফরম্যাট: https://<project-ref>.supabase.co/functions/v1/otp-auth
+      (project-ref আপনার Supabase প্রজেক্ট "top-auth" এর URL এ পাবেন)
+   2) SUPABASE_ANON_KEY: Dashboard > Project Settings > API > "anon public" key কপি করুন
+      (এটা পাবলিক কী, ক্লায়েন্ট সাইডে রাখা নিরাপদ — কিন্তু service_role key কখনো এখানে দেবেন না)
+   এই দুইটা না বসালে এই পেজ কখনোই কাজ করবে না — এটাই সবচেয়ে সম্ভাব্য কারণ কেন এখন কাজ করছে না।
+====================================================================================== */
 const CONFIG = {
   // যে ডোমেইন থেকে এই পেজ চলার অনুমতি আছে (GitHub Pages ডোমেইন)
   ALLOWED_HOSTS: ["shofiqul5.github.io"],
 
-  // Supabase Edge Function এর URL: https://<project-ref>.supabase.co/functions/v1/otp-auth
-  FUNCTION_URL: "https://jhbehehjrncergsucuja.supabase.co/functions/v1/otp-auth",
+  // Supabase Edge Function এর URL
+  FUNCTION_URL: "https://jhbehehjrncergsucuja.supabase.co/functions/v1/dynamic-function",
 
-  // Supabase প্রজেক্টের anon public key (Project Settings > API থেকে)
+  // Supabase প্রজেক্টের anon public key
   SUPABASE_ANON_KEY: "sb_publishable_bFVzFA-nKFTYYhMzc4pqXA_u4ueU929",
 
   // যাচাই সফল হলে ইউজারকে কোথায় নিয়ে যাবেন (আপনার ফোল্ডার লিস্টিং পেজ)
@@ -215,15 +226,15 @@ function showAuth(){
   document.getElementById("authCard").style.display = "block";
 }
 
-// --- soft host guard: শুধু নিরুৎসাহিত করার জন্য, প্রকৃত সুরক্ষা নয় ---
+// --- soft host guard: শুধু নিরুৎসাহিত করার জন্য, প্রকৃত সুরক্ষা নয় (উপরের কমেন্ট দেখুন) ---
 (function hostGuard(){
   const host = window.location.hostname;
-  const okHost = CONFIG.ALLOWED_HOSTS.includes(host) || host === "localhost" && false;
+  const okHost = CONFIG.ALLOWED_HOSTS.includes(host);
   if (!okHost) {
     showBlocked();
     return;
   }
-  // আগে থেকে লগইন করা থাকলে সরাসরি রিডাইরেক্ট
+  // আগে থেকে লগইন করা থাকলে (ব্রাউজার ক্যাশ/localStorage এ) সরাসরি রিডাইরেক্ট
   const cached = getSession();
   if (cached && cached.email) {
     window.location.href = CONFIG.REDIRECT_AFTER_LOGIN;
