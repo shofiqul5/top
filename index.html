@@ -1,351 +1,907 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>প্রবেশ করুন — TOP</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#14261f;
-    --paper:#f2efe6;
-    --panel:#ffffff;
-    --moss:#2f5d4f;
-    --moss-dark:#1f4137;
-    --brick:#a8493a;
-    --line:#d8d2c2;
-    --muted:#6b6f66;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;}
-  html,body{
-    min-height:100%;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Hind Siliguri', 'Segoe UI', sans-serif;
-  }
-  .wrap{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-  }
-  .card{
-    width:100%;
-    max-width:400px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:36px 32px;
-    position:relative;
-  }
-  .card::before{
-    content:"";
-    position:absolute;
-    top:0; left:0; right:0;
-    height:4px;
-    background:var(--moss);
-  }
-  .mark{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    letter-spacing:.08em;
-    color:var(--brick);
-    margin-bottom:6px;
-  }
-  h1{
-    font-size:22px;
-    font-weight:700;
-    margin:0 0 6px;
-    line-height:1.3;
-  }
-  .sub{
-    color:var(--muted);
-    font-size:14px;
-    margin:0 0 28px;
-    line-height:1.6;
-  }
-  label{
-    display:block;
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:8px;
-    color:var(--ink);
-  }
-  input[type=email], input[type=text]{
-    width:100%;
-    padding:12px 14px;
-    border:1px solid var(--line);
-    border-radius:3px;
-    font-size:15px;
-    font-family:inherit;
-    background:#fbfaf6;
-    color:var(--ink);
-    outline:none;
-    transition:border-color .15s;
-  }
-  input:focus{ border-color:var(--moss); }
-  .hint{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:8px;
-    line-height:1.5;
-  }
-  button{
-    width:100%;
-    margin-top:22px;
-    padding:13px;
-    background:var(--moss);
-    color:#fff;
-    border:none;
-    border-radius:3px;
-    font-size:15px;
-    font-weight:600;
-    font-family:inherit;
-    cursor:pointer;
-    transition:background .15s;
-  }
-  button:hover{ background:var(--moss-dark); }
-  button:disabled{ background:#a9b3ad; cursor:not-allowed; }
-  .msg{
-    margin-top:16px;
-    padding:10px 12px;
-    border-radius:3px;
-    font-size:13px;
-    line-height:1.5;
-    display:none;
-  }
-  .msg.err{ display:block; background:#fbeae7; color:var(--brick); border:1px solid #e9c8c1; }
-  .msg.ok{ display:block; background:#eaf1ec; color:var(--moss-dark); border:1px solid #c7dbce; }
-  .switch{
-    text-align:center;
-    margin-top:18px;
-    font-size:13px;
-    color:var(--muted);
-  }
-  .switch a{ color:var(--moss); text-decoration:none; font-weight:600; cursor:pointer; }
-  .step{ display:none; }
-  .step.active{ display:block; }
-  .gate-block{
-    max-width:440px;
-    margin:0 auto;
-    text-align:center;
-    padding:40px 20px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>My Repository Folders · Shofiqul Islam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-area {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        /* search */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        #search-input:focus {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        /* folder grid */
+        ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            margin-bottom: 30px;
+        }
+
+        /* folder card */
+        li {
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            min-height: 140px;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background-color: #2d2b55;
+        }
+
+        li:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+        }
+
+        /* overlay for text readability */
+        .folder-content {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 16px;
+            padding: 18px 20px;
+            width: 100%;
+            height: 100%;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        li:hover .folder-content {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        .folder-link {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .folder-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .folder-info {
+            flex: 1;
+        }
+
+        .folder-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            word-break: break-word;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .folder-desc {
+            opacity: 0.85;
+            font-weight: normal;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #loading, #error {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            grid-column: 1 / -1;
+        }
+
+        .stats {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Email button */
+        .email-footer {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .email-me-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            color: #667eea;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .email-me-btn:hover {
+            background: #f5f5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            margin-top: 20px;
+            padding: 12px;
+        }
+
+        /* Loading overlays */
+        .loader-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.3rem;
+        }
+
+        .loading-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+            max-width: 100vw;
+            padding: 0 1rem;
+        }
+
+        .letter {
+            font-size: clamp(2.6rem, 13vw, 6rem);
+            font-weight: 700;
+            display: inline-block;
+            line-height: 1;
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            color: #00ff88;
+            text-shadow: 0 0 18px #00ff88, 0 0 36px #00ff8877;
+            animation: glitchPulse 1.8s infinite ease-in-out;
+            position: relative;
+            will-change: transform, opacity;
+        }
+
+        .letter:nth-child(1) { animation-delay: 0s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.4s; }
+        .letter:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes glitchPulse {
+            0%   { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
+            12%  { opacity:1;   transform: translateY(-7px) skewX(-3deg) scale(1.03); text-shadow:3px 0 #ff0044,-3px 0 #00aaff,0 0 32px #00ff88; color:#00ff88; }
+            24%  { opacity:.55; transform: translateY(3px) skewX(2deg) scale(0.98);  text-shadow:-2px 0 #ff0044,2px 0 #00aaff,0 0 15px #00ff88; color:#00ffaa; }
+            40%  { opacity:1;   transform: translateY(-4px) skewX(0deg) scale(1.01); text-shadow:0 0 26px #00ff88,0 0 52px #00ff88; color:#00ff88; }
+            65%  { opacity:.45; transform: translateY(5px) skewX(-1deg) scale(0.99); text-shadow:0 0 10px #00ff88,0 0 20px #00ff8844; color:#00cc66; }
+            100% { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .letter { animation: none; opacity: 1; }
+        }
+
+        .progress-track {
+            width: min(65vw, 230px);
+            height: 3px;
+            background: #0f2a1e;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00cc66, #00ff88);
+            box-shadow: 0 0 10px #00ff88, 0 0 22px #00ff8877;
+            border-radius: 2px;
+            transition: width .3s cubic-bezier(.4,0,.2,1);
+        }
+
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            opacity: 1;
+            transition: opacity .5s ease;
+        }
+
+        #initial-loader.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #folder-loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,10,0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .35s ease;
+        }
+
+        #folder-loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            ul { grid-template-columns: 1fr; }
+            .folder-content { padding: 14px 16px; }
+            .folder-icon { font-size: 28px; }
+            .folder-name { font-size: 1rem; }
+        }
+
+        /* ===== Auth Gate ===== */
+        #auth-gate {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            padding: 32px 28px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .auth-box h2 {
+            color: #2d2b55;
+            margin-bottom: 8px;
+        }
+
+        .auth-sub {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0f0;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .auth-box input:focus {
+            border-color: #667eea;
+        }
+
+        .auth-box button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+
+        .auth-box button:hover {
+            transform: translateY(-1px);
+        }
+
+        .auth-box button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .link-btn {
+            background: none !important;
+            color: #667eea !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            padding: 4px !important;
+        }
+
+        .auth-msg {
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        #logout-btn {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            background: rgba(255,255,255,0.9);
+            color: #667eea;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 500;
+        }
+    </style>
 </head>
 <body>
 
-<div class="wrap">
-
-  <!-- এই পেজটি শুধু নির্ধারিত ডোমেইন থেকে চালানোর জন্য; অন্য কোথাও (localhost, ডাউনলোড করা ফোল্ডার ইত্যাদি) খুললে
-       সরাসরি একটি সতর্কবার্তা দেখাবে এবং ফর্মটাই রেন্ডার হবে না।
-       নোট: এটা শুধু নিরুৎসাহিতকরণের জন্য (UI-level gate)। যে কেউ ব্রাউজার DevTools দিয়ে এই চেকটা বাইপাস করতে
-       পারে যদি সে চায়, কারণ যেকোনো ক্লায়েন্ট-সাইড (JS-based) সুরক্ষা কখনোই ১০০% নিরাপদ হয় না। প্রকৃত ফাইল
-       সুরক্ষার জন্য ফোল্ডারের কনটেন্ট আসলে একটি অথরাইজড সার্ভার/স্টোরেজ থেকে (যেমন Supabase Storage,
-       টোকেন-প্রোটেক্টেড) আনতে হবে, GitHub Pages-এর স্ট্যাটিক ফাইল হিসেবে না রেখে। -->
-  <div id="blockedView" class="gate-block" style="display:none;">
-    <div class="mark">TOP</div>
-    <h1>এই পেজটি এখানে কাজ করবে না</h1>
-    <p class="sub">অনুগ্রহ করে মূল ওয়েবসাইট থেকে ভিজিট করুন:<br><strong>shofiqul5.github.io/top</strong></p>
-  </div>
-
-  <div id="authCard" class="card" style="display:none;">
-    <div class="mark">TOP</div>
-
-    <!-- ধাপ ১: ইমেইল দিয়ে OTP চাওয়া -->
-    <div id="stepEmail" class="step active">
-      <h1>একাউন্টে প্রবেশ করুন</h1>
-      <p class="sub">আপনার ইমেইলে একটি ৬-সংখ্যার কোড পাঠানো হবে।</p>
-
-      <label for="emailInput">ইমেইল ঠিকানা</label>
-      <input type="email" id="emailInput" placeholder="you@gmail.com" autocomplete="email" />
-      <div class="hint">শুধুমাত্র Gmail, Outlook অথবা Hotmail ইমেইল গ্রহণযোগ্য</div>
-
-      <button id="sendOtpBtn">কোড পাঠান</button>
-      <div id="emailMsg" class="msg"></div>
+<!-- Initial Page Entry Loader -->
+<div id="initial-loader" role="status" aria-label="Loading">
+    <div class="loader-inner">
+        <div class="loading-text">
+            <span class="letter">a</span>
+            <span class="letter">b</span>
+            <span class="letter">i</span>
+            <span class="letter">d</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="initial-loader-fill"></div>
+        </div>
     </div>
-
-    <!-- ধাপ ২: OTP ভেরিফিকেশন -->
-    <div id="stepOtp" class="step">
-      <h1>কোড লিখুন</h1>
-      <p class="sub"><span id="sentToEmail"></span>-এ পাঠানো ৬-সংখ্যার কোডটি লিখুন।</p>
-
-      <label for="otpInput">ভেরিফিকেশন কোড</label>
-      <input type="text" id="otpInput" maxlength="6" inputmode="numeric" placeholder="000000" />
-
-      <button id="verifyBtn">যাচাই করুন</button>
-      <div id="otpMsg" class="msg"></div>
-
-      <div class="switch"><a id="backLink">ইমেইল পরিবর্তন করুন</a></div>
-    </div>
-
-    <!-- ধাপ ৩: সফল হলে -->
-    <div id="stepDone" class="step">
-      <h1>স্বাগতম!</h1>
-      <p class="sub">আপনার একাউন্ট যাচাই সম্পন্ন হয়েছে।</p>
-      <button id="continueBtn">ফোল্ডারে যান</button>
-    </div>
-  </div>
-
 </div>
 
+<!-- Folder Opening Loader -->
+<div id="folder-loader" role="status" aria-label="Opening folder">
+    <div class="loader-inner">
+        <div class="loading-text">
+            <span class="letter">a</span>
+            <span class="letter">b</span>
+            <span class="letter">i</span>
+            <span class="letter">d</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="folder-loader-fill"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Auth Gate: লগইন না হওয়া পর্যন্ত এটাই দেখাবে -->
+<div id="auth-gate" class="hidden">
+    <div class="auth-box">
+        <h2>🔐 লগইন করুন</h2>
+        <p class="auth-sub">শুধুমাত্র Gmail, Outlook বা Hotmail ইমেইল দিয়ে অ্যাকাউন্ট খোলা যাবে</p>
+
+        <div id="auth-step-email">
+            <input type="email" id="auth-email" placeholder="you@gmail.com" autocomplete="off">
+            <button id="btn-send-otp">OTP পাঠান</button>
+        </div>
+
+        <div id="auth-step-otp" class="hidden">
+            <input type="text" id="auth-otp" placeholder="৬ ডিজিটের কোড" maxlength="6" autocomplete="off" inputmode="numeric">
+            <button id="btn-verify-otp">যাচাই করুন</button>
+            <button id="btn-resend-otp" class="link-btn">অন্য ইমেইল দিন / আবার পাঠান</button>
+        </div>
+
+        <div id="auth-msg" class="auth-msg hidden"></div>
+    </div>
+</div>
+
+<!-- Main Content: লগইনের পরই দেখা যাবে -->
+<div id="main-content" class="hidden">
+<button id="logout-btn" class="hidden">লগআউট</button>
+<div class="container">
+    <div class="header-area">
+        <h1>📁 Document Folders</h1>
+    </div>
+
+    <div class="search-container">
+        <input 
+            type="text" 
+            id="search-input" 
+            placeholder="🔍 Search folders by name..."
+            autocomplete="off"
+        >
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div id="loading">⏳ Loading folders...</div>
+    <div id="error" class="hidden"></div>
+    <ul id="folder-list" class="hidden"></ul>
+
+    <div class="email-footer">
+        <a href="https://shofiqul5.github.io/#contact" class="email-me-btn" target="_blank" rel="noopener noreferrer">
+            Contact Me
+        </a>
+    </div>
+
+    <div class="footer-note">
+        ⚡ GitHub API · folders from /shofiqul5/top
+    </div>
+</div>
+</div><!-- /main-content -->
+
 <script>
-/* ======================= কনফিগারেশন — এখানে আপনার তথ্য বসান =======================
-   1) FUNCTION_URL: Supabase Dashboard > Edge Functions > otp-auth > "Invoke URL" থেকে কপি করুন
-      ফরম্যাট: https://<project-ref>.supabase.co/functions/v1/otp-auth
-      (project-ref আপনার Supabase প্রজেক্ট "top-auth" এর URL এ পাবেন)
-   2) SUPABASE_ANON_KEY: Dashboard > Project Settings > API > "anon public" key কপি করুন
-      (এটা পাবলিক কী, ক্লায়েন্ট সাইডে রাখা নিরাপদ — কিন্তু service_role key কখনো এখানে দেবেন না)
-   এই দুইটা না বসালে এই পেজ কখনোই কাজ করবে না — এটাই সবচেয়ে সম্ভাব্য কারণ কেন এখন কাজ করছে না।
-====================================================================================== */
-const CONFIG = {
-  // যে ডোমেইন থেকে এই পেজ চলার অনুমতি আছে (GitHub Pages ডোমেইন)
-  ALLOWED_HOSTS: ["shofiqul5.github.io"],
+    // ============ SUPABASE CONFIG — এখানে আপনার নিজের ভ্যালু বসান ============
+    const SUPABASE_FUNCTIONS_URL = 'https://jhbehehjrncergsucuja.supabase.co/functions/v1';
+    const SUPABASE_ANON_KEY = 'sb_publishable_bFVzFA-nKFTYYhMzc4pqXA_u4ueU929'; // এই key public/সেভ - এটা এক্সপোজ থাকা স্বাভাবিক
+    const ALLOWED_HOST = 'shofiqul5.github.io';
+    // ==========================================================================
 
-  // Supabase Edge Function এর URL
-  FUNCTION_URL: "https://jhbehehjrncergsucuja.supabase.co/functions/v1/dynamic-function",
+    // ---- হোস্ট লক: রিপো ডাউনলোড করে লোকালহোস্ট বা অন্য কোথাও রান করলে সাইট বন্ধ করে দেবে ----
+    if (location.hostname !== ALLOWED_HOST) {
+        document.body.style.cssText = 'margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;color:#fff;font-family:sans-serif;text-align:center;padding:20px;';
+        document.body.innerHTML = '<div><h1>⛔ এই সাইট এখানে চলবে না</h1><p>এটি শুধুমাত্র https://' + ALLOWED_HOST + '/top/ থেকেই চলবে।</p></div>';
+        throw new Error('Unauthorized host — script stopped');
+    }
 
-  // Supabase প্রজেক্টের anon public key
-  SUPABASE_ANON_KEY: "sb_publishable_bFVzFA-nKFTYYhMzc4pqXA_u4ueU929",
+    // Config
+    const username = 'shofiqul5';
+    const repo = 'top';
+    const excludedFolders = ['.github', '.git', 'css', 'images'];
+    const folderDescriptions = {};
 
-  // যাচাই সফল হলে ইউজারকে কোথায় নিয়ে যাবেন (আপনার ফোল্ডার লিস্টিং পেজ)
-  REDIRECT_AFTER_LOGIN: "folders.html"
-};
-/* ===================================================================================== */
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
+    let allFolders = [];
 
-const LS_KEY = "top_auth_session";
+    // DOM Elements
+    const folderListEl = document.getElementById('folder-list');
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const statsEl = document.getElementById('stats');
+    const searchInput = document.getElementById('search-input');
 
-function showBlocked(){
-  document.getElementById("blockedView").style.display = "block";
-}
-function showAuth(){
-  document.getElementById("authCard").style.display = "block";
-}
+    const initialLoader = document.getElementById('initial-loader');
+    const initialLoaderFill = document.getElementById('initial-loader-fill');
+    const folderLoader = document.getElementById('folder-loader');
+    const folderLoaderFill = document.getElementById('folder-loader-fill');
 
-// --- soft host guard: শুধু নিরুৎসাহিত করার জন্য, প্রকৃত সুরক্ষা নয় (উপরের কমেন্ট দেখুন) ---
-(function hostGuard(){
-  const host = window.location.hostname;
-  const okHost = CONFIG.ALLOWED_HOSTS.includes(host);
-  if (!okHost) {
-    showBlocked();
-    return;
-  }
-  // আগে থেকে লগইন করা থাকলে (ব্রাউজার ক্যাশ/localStorage এ) সরাসরি রিডাইরেক্ট
-  const cached = getSession();
-  if (cached && cached.email) {
-    window.location.href = CONFIG.REDIRECT_AFTER_LOGIN;
-    return;
-  }
-  showAuth();
-})();
+    // Helper: Progress Fill Animation
+    function animateFill(fillEl, duration, onDone) {
+        const start = performance.now();
+        function frame(now) {
+            const elapsed = now - start;
+            const pct = Math.min(100, (elapsed / duration) * 100);
+            fillEl.style.width = pct + '%';
+            if (pct < 100) {
+                requestAnimationFrame(frame);
+            } else if (onDone) {
+                onDone();
+            }
+        }
+        requestAnimationFrame(frame);
+    }
 
-function getSession(){
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-function setSession(user){
-  localStorage.setItem(LS_KEY, JSON.stringify({ email: user.email, id: user.id, ts: Date.now() }));
-}
+    // Initial loader controller
+    let foldersReady = false;
+    let initialFillDone = false;
+    const initialMinDuration = 800; // Quick initial load
 
-const ALLOWED_DOMAINS = ["gmail.com", "outlook.com", "hotmail.com", "live.com"];
-function isAllowedEmail(email){
-  const domain = (email.split("@")[1] || "").toLowerCase();
-  return ALLOWED_DOMAINS.includes(domain);
-}
+    function tryHideInitialLoader() {
+        if (foldersReady && initialFillDone) {
+            initialLoader.classList.add('hide');
+            initialLoader.addEventListener('transitionend', function () {
+                initialLoader.remove();
+            }, { once: true });
+        }
+    }
 
-async function callFunction(payload){
-  const res = await fetch(CONFIG.FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + CONFIG.SUPABASE_ANON_KEY,
-      "apikey": CONFIG.SUPABASE_ANON_KEY
-    },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "কিছু একটা সমস্যা হয়েছে");
-  return data;
-}
+    animateFill(initialLoaderFill, initialMinDuration, function () {
+        initialFillDone = true;
+        tryHideInitialLoader();
+    });
 
-function showMsg(el, text, type){
-  el.textContent = text;
-  el.className = "msg " + type;
-}
-function goStep(id){
-  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
+    // FIXED: Folder click handler that bypasses browser pop-up blockers
+    function openFolderWithLoader(url) {
+        // 1. Open blank tab immediately while browser recognises user click event
+        const newTab = window.open('about:blank', '_blank');
 
-let currentEmail = "";
+        folderLoader.classList.add('active');
+        folderLoaderFill.style.width = '0%';
+        const duration = 600; // Snappy 600ms transition
 
-document.getElementById("sendOtpBtn").addEventListener("click", async () => {
-  const emailInput = document.getElementById("emailInput");
-  const msg = document.getElementById("emailMsg");
-  const email = emailInput.value.trim().toLowerCase();
-  const btn = document.getElementById("sendOtpBtn");
+        animateFill(folderLoaderFill, duration, function () {
+            // 2. Redirect the target window once animation completes
+            if (newTab) {
+                newTab.location.href = url;
+            } else {
+                window.location.href = url; // Fallback if popup blocker completely blocked newTab
+            }
+            folderLoader.classList.remove('active');
+        });
+    }
 
-  msg.className = "msg";
-  if (!email || !isAllowedEmail(email)) {
-    showMsg(msg, "শুধুমাত্র Gmail, Outlook অথবা Hotmail ইমেইল দিয়ে চেষ্টা করুন", "err");
-    return;
-  }
+    // Background Image Helper
+    function getFolderImageUrl(folderName) {
+        return `https://raw.githubusercontent.com/${username}/${repo}/main/${encodeURIComponent(folderName)}/folder-image.jpg`;
+    }
 
-  btn.disabled = true;
-  btn.textContent = "পাঠানো হচ্ছে...";
-  try {
-    await callFunction({ action: "send-otp", email });
-    currentEmail = email;
-    document.getElementById("sentToEmail").textContent = email;
-    goStep("stepOtp");
-  } catch (e) {
-    showMsg(msg, e.message, "err");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "কোড পাঠান";
-  }
-});
+    function applyFolderBackground(liElement, folderName) {
+        const imageUrl = getFolderImageUrl(folderName);
+        const fallbackColor = "#2d2b55";
 
-document.getElementById("verifyBtn").addEventListener("click", async () => {
-  const otpInput = document.getElementById("otpInput");
-  const msg = document.getElementById("otpMsg");
-  const code = otpInput.value.trim();
-  const btn = document.getElementById("verifyBtn");
+        liElement.style.backgroundColor = fallbackColor;
+        liElement.style.backgroundImage = "none";
 
-  msg.className = "msg";
-  if (!/^\d{6}$/.test(code)) {
-    showMsg(msg, "৬-সংখ্যার সঠিক কোড লিখুন", "err");
-    return;
-  }
+        const img = new Image();
+        img.onload = function() {
+            liElement.style.backgroundImage = `url('${imageUrl}')`;
+            liElement.style.backgroundSize = "cover";
+            liElement.style.backgroundPosition = "center";
+            liElement.style.backgroundColor = "transparent";
+        };
+        img.onerror = function() {
+            liElement.style.backgroundColor = fallbackColor;
+            liElement.style.backgroundImage = "none";
+        };
+        img.src = imageUrl;
+    }
 
-  btn.disabled = true;
-  btn.textContent = "যাচাই হচ্ছে...";
-  try {
-    const data = await callFunction({ action: "verify-otp", email: currentEmail, code });
-    setSession(data.user);
-    goStep("stepDone");
-  } catch (e) {
-    showMsg(msg, e.message, "err");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "যাচাই করুন";
-  }
-});
+    // Card Builder
+    function createFolderCard(folder) {
+        const li = document.createElement('li');
+        const folderName = folder.name;
+        const description = folderDescriptions[folderName] || '';
 
-document.getElementById("backLink").addEventListener("click", () => {
-  goStep("stepEmail");
-});
+        applyFolderBackground(li, folderName);
 
-document.getElementById("continueBtn").addEventListener("click", () => {
-  window.location.href = CONFIG.REDIRECT_AFTER_LOGIN;
-});
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'folder-content';
+
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'folder-link';
+        linkDiv.setAttribute('role', 'link');
+        linkDiv.setAttribute('tabindex', '0');
+
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'folder-icon';
+        iconSpan.textContent = '📂';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'folder-info';
+
+        const nameSpan = document.createElement('div');
+        nameSpan.className = 'folder-name';
+        nameSpan.textContent = folderName;
+        infoDiv.appendChild(nameSpan);
+
+        if (description) {
+            const descSpan = document.createElement('small');
+            descSpan.className = 'folder-desc';
+            descSpan.textContent = description;
+            infoDiv.appendChild(descSpan);
+        }
+
+        linkDiv.appendChild(iconSpan);
+        linkDiv.appendChild(infoDiv);
+        contentDiv.appendChild(linkDiv);
+        li.appendChild(contentDiv);
+
+        const folderUrl = `https://${username}.github.io/${repo}/${folderName}/`;
+
+        const openFolder = (e) => {
+            e.stopPropagation();
+            openFolderWithLoader(folderUrl);
+        };
+
+        li.addEventListener('click', openFolder);
+        li.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openFolderWithLoader(folderUrl);
+            }
+        });
+
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('aria-label', `Open folder ${folderName}`);
+
+        return li;
+    }
+
+    // Render Function
+    function renderFolders(folders) {
+        folderListEl.innerHTML = '';
+
+        if (folders.length === 0) {
+            folderListEl.innerHTML = '<div class="no-results">🔍 No folders found matching your search</div>';
+            return;
+        }
+
+        folders.forEach(folder => {
+            const card = createFolderCard(folder);
+            folderListEl.appendChild(card);
+        });
+    }
+
+    // FIXED: Global Search Handler
+    function handleSearch(e) {
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = allFolders.filter(folder => 
+            folder.name.toLowerCase().includes(term) ||
+            (folderDescriptions[folder.name] && folderDescriptions[folder.name].toLowerCase().includes(term))
+        );
+        renderFolders(filtered);
+
+        if (term === '') {
+            statsEl.textContent = `📁 Found ${allFolders.length} folder${allFolders.length !== 1 ? 's' : ''}`;
+        } else {
+            statsEl.textContent = `🔍 Found ${filtered.length} folder${filtered.length !== 1 ? 's' : ''} matching "${term}"`;
+        }
+    }
+
+    // Attach search event listener ONCE globally
+    searchInput.addEventListener('input', handleSearch);
+
+    // Fetch Folders from API
+    async function fetchFolders() {
+        try {
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid API response structure');
+            }
+
+            allFolders = data.filter(item => 
+                item.type === 'dir' && !excludedFolders.includes(item.name)
+            );
+
+            allFolders.sort((a, b) => a.name.localeCompare(b.name));
+
+            const count = allFolders.length;
+            statsEl.textContent = `📁 Found ${count} folder${count !== 1 ? 's' : ''}`;
+
+            loadingEl.classList.add('hidden');
+            folderListEl.classList.remove('hidden');
+
+            renderFolders(allFolders);
+
+            foldersReady = true;
+            tryHideInitialLoader();
+
+        } catch (err) {
+            console.error('Fetch error:', err);
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            errorEl.innerHTML = `
+                ❌ Failed to load folders<br>
+                <small>${err.message}</small><br>
+                <small>Ensure repository is public: ${username}/${repo}</small>
+            `;
+            foldersReady = true;
+            tryHideInitialLoader();
+        }
+    }
+
+    // ================= AUTH LOGIC =================
+    const SESSION_KEY = 'top_repo_session_token';
+    const EMAIL_KEY = 'top_repo_session_email';
+
+    const authGate = document.getElementById('auth-gate');
+    const mainContent = document.getElementById('main-content');
+    const authEmailInput = document.getElementById('auth-email');
+    const authOtpInput = document.getElementById('auth-otp');
+    const authMsg = document.getElementById('auth-msg');
+    const stepEmail = document.getElementById('auth-step-email');
+    const stepOtp = document.getElementById('auth-step-otp');
+    const btnSendOtp = document.getElementById('btn-send-otp');
+    const btnVerifyOtp = document.getElementById('btn-verify-otp');
+    const btnResendOtp = document.getElementById('btn-resend-otp');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    function showAuthMsg(text, isError = true) {
+        authMsg.textContent = text;
+        authMsg.classList.remove('hidden');
+        authMsg.style.color = isError ? '#c0392b' : '#1a7a3d';
+    }
+
+    function edgeHeaders() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'apikey': SUPABASE_ANON_KEY
+        };
+    }
+
+    async function sendOtp() {
+        const email = authEmailInput.value.trim().toLowerCase();
+        if (!email) { showAuthMsg('ইমেইল লিখুন'); return; }
+
+        btnSendOtp.disabled = true;
+        btnSendOtp.textContent = 'পাঠানো হচ্ছে...';
+
+        try {
+            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/send-otp`, {
+                method: 'POST',
+                headers: edgeHeaders(),
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'OTP পাঠানো যায়নি');
+
+            showAuthMsg('✅ OTP পাঠানো হয়েছে, ইমেইল চেক করুন', false);
+            stepEmail.classList.add('hidden');
+            stepOtp.classList.remove('hidden');
+            authOtpInput.focus();
+        } catch (err) {
+            showAuthMsg(err.message);
+        } finally {
+            btnSendOtp.disabled = false;
+            btnSendOtp.textContent = 'OTP পাঠান';
+        }
+    }
+
+    async function verifyOtp() {
+        const email = authEmailInput.value.trim().toLowerCase();
+        const code = authOtpInput.value.trim();
+        if (!code) { showAuthMsg('OTP কোড লিখুন'); return; }
+
+        btnVerifyOtp.disabled = true;
+        btnVerifyOtp.textContent = 'যাচাই হচ্ছে...';
+
+        try {
+            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/verify-otp`, {
+                method: 'POST',
+                headers: edgeHeaders(),
+                body: JSON.stringify({ email, code })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'ভুল OTP কোড');
+
+            localStorage.setItem(SESSION_KEY, data.token);
+            localStorage.setItem(EMAIL_KEY, data.email);
+            unlockSite();
+        } catch (err) {
+            showAuthMsg(err.message);
+        } finally {
+            btnVerifyOtp.disabled = false;
+            btnVerifyOtp.textContent = 'যাচাই করুন';
+        }
+    }
+
+    async function checkSession(token) {
+        try {
+            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/check-session`, {
+                method: 'POST',
+                headers: edgeHeaders(),
+                body: JSON.stringify({ token })
+            });
+            if (!res.ok) return false;
+            const data = await res.json();
+            return !!data.valid;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function unlockSite() {
+        authGate.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+        logoutBtn.classList.remove('hidden');
+        fetchFolders();
+    }
+
+    function logout() {
+        localStorage.removeItem(SESSION_KEY);
+        localStorage.removeItem(EMAIL_KEY);
+        location.reload();
+    }
+
+    btnSendOtp.addEventListener('click', sendOtp);
+    btnVerifyOtp.addEventListener('click', verifyOtp);
+    btnResendOtp.addEventListener('click', () => {
+        stepOtp.classList.add('hidden');
+        stepEmail.classList.remove('hidden');
+        authMsg.classList.add('hidden');
+        authOtpInput.value = '';
+    });
+    logoutBtn.addEventListener('click', logout);
+
+    // ---- শুরুতে: আগে থেকে সেশন (cache) আছে কিনা চেক করি ----
+    (async function initAuth() {
+        const token = localStorage.getItem(SESSION_KEY);
+        if (token) {
+            const valid = await checkSession(token);
+            if (valid) {
+                unlockSite();
+                return;
+            }
+            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(EMAIL_KEY);
+        }
+        // লগইন করা নেই — auth gate দেখাই, initial loader সরিয়ে দিই
+        authGate.classList.remove('hidden');
+        foldersReady = true;
+        tryHideInitialLoader();
+    })();
 </script>
-
 </body>
 </html>
