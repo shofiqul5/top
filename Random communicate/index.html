@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>Random Communicate</title>
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Random">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="home" class="view on">
+  <button class="ib gear" id="set1" data-i="dots" aria-label="Settings"></button>
+  <div class="card">
+    <div class="brand">
+      <div class="logo" data-i="chat"></div>
+      <h1>Random <span>Communicate</span></h1>
+    </div>
+    <div id="a" class="card">
+      <input id="name" class="f" placeholder="Your name" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button id="go" class="pri">Create account</button><button id="rsb" class="ghost">Restore from backup</button>
+    </div>
+  </div>
+</main>
+
+<main id="app" class="view">
+  <aside id="side">
+    <div class="top"><i class="av sm" id="mav"></i><b>Chats</b><div class="mw"><button class="ib" id="dots" data-i="dots" aria-label="Menu"></button><div class="menu" id="menu" hidden><button id="mnew"><i data-i="uplus"></i>New connect</button><button id="mpro"><i data-i="user"></i>Profile</button><hr><button id="mset"><i data-i="gear"></i>Settings</button></div></div></div>
+    <div class="tabs"><button class="tb sel" data-tab="c">Contact chat</button><button class="tb" data-tab="w">World chat</button></div>
+    <div id="pc" class="pane">
+      
+      <div class="bar"><label class="sb"><i data-i="search"></i><input id="q" placeholder="Search contacts" autocomplete="off"></label></div>
+      <div id="list"></div>
+    </div>
+    <div id="pw" class="pane" hidden>
+      <div class="bar"><label class="sb"><i data-i="search"></i><input id="wq" placeholder="Search people & groups" autocomplete="off"></label></div>
+      <div id="wl"></div>
+      <button id="gnew" class="fab" data-i="plus" aria-label="New group"></button>
+    </div>
+  </aside>
+  <section id="chat">
+    <div id="none"><i class="logo" data-i="chat"></i></div>
+    <div id="cv">
+      <header>
+        <button class="ib" id="back" data-i="back" aria-label="Back"></button>
+        <i class="av sm" id="hav"></i><div class="ttl"><b id="peer"></b><small id="stt"></small></div>
+        <button class="ib" id="del" data-i="trash" aria-label="Delete chat"></button>
+        <button class="ib" id="ac" data-i="call" aria-label="Audio call"></button>
+        <button class="ib" id="vc" data-i="video" aria-label="Video call"></button>
+      </header>
+      <div id="msgs"></div>
+      <form id="form">
+        <button type="button" class="ib" id="clip" data-i="clip" aria-label="Attach"></button>
+        <input id="msg" placeholder="Message" autocomplete="off">
+        <button type="submit" class="ib" id="act" aria-label="Send"></button>
+      </form>
+      <input type="file" id="file" accept="image/*,video/*,audio/*" hidden>
+    </div>
+  </section>
+</main>
+
+<div id="call" class="layer">
+  <video id="rv" autoplay playsinline></video>
+  <video id="lv" autoplay playsinline muted></video>
+  <div class="cinfo"><b id="cwho"></b><span id="cst"></span></div>
+  <div class="ctl">
+    <button class="cb" id="mute" data-i="mic" aria-label="Mute"></button>
+    <button class="cb" id="cam" data-i="video" aria-label="Camera"></button>
+    <button class="cb end" id="end" data-i="call" aria-label="End call"></button>
+  </div>
+</div>
+
+<div id="inc" class="layer">
+  <div class="box">
+    <b id="who"></b><span id="intype"></span>
+    <div>
+      <button class="cb no" id="no" data-i="call" aria-label="Decline"></button>
+      <button class="cb" id="yes" data-i="call" aria-label="Answer"></button>
+    </div>
+  </div>
+</div>
+
+<div id="how" class="layer modal"><div class="sheet"><h2>How to use</h2><ol>
+<li><b>Account.</b> Pick a name and create your account. Back it up from ⋮ → Profile.</li>
+<li><b>⋮ menu.</b> New connect adds a friend by ID or QR. Profile has your photo, QR and backup. Settings has themes and help.</li>
+<li><b>Contact chat.</b> Your friends. Search them, tap to chat, use the top icons to call.</li>
+<li><b>Install.</b> Settings → Install app, or use Add to Home Screen in your browser.</li>
+<li><b>World chat.</b> Find people and groups online. Tap + to create a group.</li>
+</ol><label class="chk"><input type="checkbox" id="hn"> Don't show again</label><button class="pri" id="hx">OK</button></div></div>
+
+<div id="set" class="layer modal">
+  <div class="sheet">
+    <h2>Settings</h2>
+    <div class="sec">Theme</div>
+    <div class="themes">
+      <button class="th" data-t="light">Light</button><button class="th" data-t="dark">Dark</button>
+      <button class="th" data-t="black">Black</button><button class="th" data-t="system">System</button>
+    </div>
+    <button class="th" id="sh">How to use</button>
+    <button class="th" id="ctb">Contact</button>
+    <button class="th" id="inst" hidden>Install app</button>
+    <button class="th" id="so">Remove account from device</button>
+    <button class="pri" id="sx">Close</button>
+  </div>
+</div>
+
+<div id="nc" class="layer modal"><div class="sheet"><h2>New connect</h2><button class="th" id="scb">Scan QR code</button><input id="to" class="f" placeholder="Friend's ID" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="pri" id="connect">Connect</button><button class="ghost" data-x="#nc">Cancel</button></div></div>
+<div id="pr" class="layer modal"><div class="sheet pro"><button class="ib px" data-x="#pr" data-i="x" aria-label="Close"></button>
+<div class="pavw"><i class="av lg" id="pav"></i><button class="cam" id="pch" data-i="cam" aria-label="Change photo"></button></div>
+<b id="pnm"></b><span class="chip" id="pshort"></span>
+<div class="qrc"><img id="qr" alt="" hidden></div>
+<div class="acts"><button class="act" id="pcp"><i data-i="copy"></i>Copy ID</button><button class="act" id="pbk"><i data-i="down"></i>Back up</button><button class="act" id="prm"><i data-i="trash"></i>No photo</button></div>
+<input type="file" id="pf" accept="image/*" hidden></div></div>
+<div id="ng" class="layer modal"><div class="sheet"><h2>New group</h2><div style="display:flex;gap:12px;align-items:center"><i class="av lg" id="gav" style="cursor:pointer;flex:none"></i><input id="gn" class="f" placeholder="Group name" maxlength="30" autocomplete="off"></div><input type="file" id="gf" accept="image/*" hidden><button class="pri" id="gok">Create group</button><button class="ghost" data-x="#ng">Cancel</button></div></div>
+<div id="bk" class="layer modal"><div class="sheet"><h2>Back up account</h2><p>Encrypted with your password. It cannot be recovered if you forget it.</p><input id="bkp" type="password" class="f" placeholder="Password (8+ characters)" autocomplete="new-password"><button class="pri" id="bkd">Download backup</button><button class="ghost" data-x="#bk">Cancel</button></div></div>
+<div id="rs" class="layer modal"><div class="sheet"><h2>Restore account</h2><input id="rsf" type="file" accept=".rcbak,application/json" class="f" style="padding-top:14px"><input id="rsp" type="password" class="f" placeholder="Backup password"><button class="pri" id="rsok">Restore</button><button class="ghost" data-x="#rs">Cancel</button></div></div>
+<div id="sc" class="layer modal"><div class="sheet"><h2>Scan QR code</h2><video id="scv" playsinline muted style="width:100%;border-radius:16px;background:#000"></video><button class="ghost" id="scx">Cancel</button></div></div>
+<div id="perm" class="layer modal">
+  <div class="sheet">
+    <h2 id="pt"></h2><p id="pd"></p>
+    <button class="pri" id="pok"></button><button class="ghost" id="pno"></button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="script.js"> </script>
+</body>
+</html>
