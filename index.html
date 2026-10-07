@@ -316,105 +316,6 @@
             .folder-icon { font-size: 28px; }
             .folder-name { font-size: 1rem; }
         }
-
-        /* ===== Auth Gate ===== */
-        #auth-gate {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-box {
-            background: rgba(255,255,255,0.97);
-            border-radius: 20px;
-            padding: 32px 28px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-            text-align: center;
-        }
-
-        .auth-box h2 {
-            color: #2d2b55;
-            margin-bottom: 8px;
-        }
-
-        .auth-sub {
-            color: #666;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-
-        .auth-box input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0f0;
-            border-radius: 10px;
-            font-size: 15px;
-            margin-bottom: 12px;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        .auth-box input:focus {
-            border-color: #667eea;
-        }
-
-        .auth-box button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transition: transform 0.15s ease, opacity 0.15s ease;
-        }
-
-        .auth-box button:hover {
-            transform: translateY(-1px);
-        }
-
-        .auth-box button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .link-btn {
-            background: none !important;
-            color: #667eea !important;
-            font-weight: 600 !important;
-            font-size: 13px !important;
-            padding: 4px !important;
-        }
-
-        .auth-msg {
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        #logout-btn {
-            position: fixed;
-            top: 14px;
-            right: 14px;
-            background: rgba(255,255,255,0.9);
-            color: #667eea;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 500;
-        }
     </style>
 </head>
 <body>
@@ -449,30 +350,6 @@
     </div>
 </div>
 
-<!-- Auth Gate: লগইন না হওয়া পর্যন্ত এটাই দেখাবে -->
-<div id="auth-gate" class="hidden">
-    <div class="auth-box">
-        <h2>🔐 লগইন করুন</h2>
-        <p class="auth-sub">শুধুমাত্র Gmail, Outlook বা Hotmail ইমেইল দিয়ে অ্যাকাউন্ট খোলা যাবে</p>
-
-        <div id="auth-step-email">
-            <input type="email" id="auth-email" placeholder="you@gmail.com" autocomplete="off">
-            <button id="btn-send-otp">OTP পাঠান</button>
-        </div>
-
-        <div id="auth-step-otp" class="hidden">
-            <input type="text" id="auth-otp" placeholder="৬ ডিজিটের কোড" maxlength="6" autocomplete="off" inputmode="numeric">
-            <button id="btn-verify-otp">যাচাই করুন</button>
-            <button id="btn-resend-otp" class="link-btn">অন্য ইমেইল দিন / আবার পাঠান</button>
-        </div>
-
-        <div id="auth-msg" class="auth-msg hidden"></div>
-    </div>
-</div>
-
-<!-- Main Content: লগইনের পরই দেখা যাবে -->
-<div id="main-content" class="hidden">
-<button id="logout-btn" class="hidden">লগআউট</button>
 <div class="container">
     <div class="header-area">
         <h1>📁 Document Folders</h1>
@@ -502,22 +379,8 @@
         ⚡ GitHub API · folders from /shofiqul5/top
     </div>
 </div>
-</div><!-- /main-content -->
 
 <script>
-    // ============ SUPABASE CONFIG — এখানে আপনার নিজের ভ্যালু বসান ============
-    const SUPABASE_FUNCTIONS_URL = 'https://jhbehehjrncergsucuja.supabase.co/functions/v1';
-    const SUPABASE_ANON_KEY = 'sb_publishable_bFVzFA-nKFTYYhMzc4pqXA_u4ueU929'; // এই key public/সেভ - এটা এক্সপোজ থাকা স্বাভাবিক
-    const ALLOWED_HOST = 'shofiqul5.github.io';
-    // ==========================================================================
-
-    // ---- হোস্ট লক: রিপো ডাউনলোড করে লোকালহোস্ট বা অন্য কোথাও রান করলে সাইট বন্ধ করে দেবে ----
-    if (location.hostname !== ALLOWED_HOST) {
-        document.body.style.cssText = 'margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;color:#fff;font-family:sans-serif;text-align:center;padding:20px;';
-        document.body.innerHTML = '<div><h1>⛔ এই সাইট এখানে চলবে না</h1><p>এটি শুধুমাত্র https://' + ALLOWED_HOST + '/top/ থেকেই চলবে।</p></div>';
-        throw new Error('Unauthorized host — script stopped');
-    }
-
     // Config
     const username = 'shofiqul5';
     const repo = 'top';
@@ -574,22 +437,32 @@
         tryHideInitialLoader();
     });
 
-    // FIXED: Folder click handler that bypasses browser pop-up blockers
+    // FIXED: Folder click handler that works on all browsers/devices
     function openFolderWithLoader(url) {
-        // 1. Open blank tab immediately while browser recognises user click event
-        const newTab = window.open('about:blank', '_blank');
+        // 1. Open the real URL immediately, synchronously inside the click
+        //    handler. Browsers (especially mobile Safari/Chrome) only allow
+        //    window.open to bypass the popup blocker if it happens directly
+        //    inside the click event — any delay (like waiting for an
+        //    animation to finish) makes them block it or treat it as an
+        //    untrusted redirect.
+        const newTab = window.open(url, '_blank', 'noopener');
 
+        if (!newTab) {
+            // Popup blocked entirely (rare, but some browsers still do this)
+            // -> fall back to navigating the current tab so the user still
+            // reaches the folder.
+            window.location.href = url;
+            return;
+        }
+
+        // 2. Play the loader animation purely as visual feedback on THIS
+        //    page. It no longer controls navigation, so even if it doesn't
+        //    finish or the user closes it, the folder has already opened.
         folderLoader.classList.add('active');
         folderLoaderFill.style.width = '0%';
-        const duration = 600; // Snappy 600ms transition
+        const duration = 600;
 
         animateFill(folderLoaderFill, duration, function () {
-            // 2. Redirect the target window once animation completes
-            if (newTab) {
-                newTab.location.href = url;
-            } else {
-                window.location.href = url; // Fallback if popup blocker completely blocked newTab
-            }
             folderLoader.classList.remove('active');
         });
     }
@@ -761,147 +634,8 @@
         }
     }
 
-    // ================= AUTH LOGIC =================
-    const SESSION_KEY = 'top_repo_session_token';
-    const EMAIL_KEY = 'top_repo_session_email';
-
-    const authGate = document.getElementById('auth-gate');
-    const mainContent = document.getElementById('main-content');
-    const authEmailInput = document.getElementById('auth-email');
-    const authOtpInput = document.getElementById('auth-otp');
-    const authMsg = document.getElementById('auth-msg');
-    const stepEmail = document.getElementById('auth-step-email');
-    const stepOtp = document.getElementById('auth-step-otp');
-    const btnSendOtp = document.getElementById('btn-send-otp');
-    const btnVerifyOtp = document.getElementById('btn-verify-otp');
-    const btnResendOtp = document.getElementById('btn-resend-otp');
-    const logoutBtn = document.getElementById('logout-btn');
-
-    function showAuthMsg(text, isError = true) {
-        authMsg.textContent = text;
-        authMsg.classList.remove('hidden');
-        authMsg.style.color = isError ? '#c0392b' : '#1a7a3d';
-    }
-
-    function edgeHeaders() {
-        return {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'apikey': SUPABASE_ANON_KEY
-        };
-    }
-
-    async function sendOtp() {
-        const email = authEmailInput.value.trim().toLowerCase();
-        if (!email) { showAuthMsg('ইমেইল লিখুন'); return; }
-
-        btnSendOtp.disabled = true;
-        btnSendOtp.textContent = 'পাঠানো হচ্ছে...';
-
-        try {
-            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/send-otp`, {
-                method: 'POST',
-                headers: edgeHeaders(),
-                body: JSON.stringify({ email })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'OTP পাঠানো যায়নি');
-
-            showAuthMsg('✅ OTP পাঠানো হয়েছে, ইমেইল চেক করুন', false);
-            stepEmail.classList.add('hidden');
-            stepOtp.classList.remove('hidden');
-            authOtpInput.focus();
-        } catch (err) {
-            showAuthMsg(err.message);
-        } finally {
-            btnSendOtp.disabled = false;
-            btnSendOtp.textContent = 'OTP পাঠান';
-        }
-    }
-
-    async function verifyOtp() {
-        const email = authEmailInput.value.trim().toLowerCase();
-        const code = authOtpInput.value.trim();
-        if (!code) { showAuthMsg('OTP কোড লিখুন'); return; }
-
-        btnVerifyOtp.disabled = true;
-        btnVerifyOtp.textContent = 'যাচাই হচ্ছে...';
-
-        try {
-            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/verify-otp`, {
-                method: 'POST',
-                headers: edgeHeaders(),
-                body: JSON.stringify({ email, code })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'ভুল OTP কোড');
-
-            localStorage.setItem(SESSION_KEY, data.token);
-            localStorage.setItem(EMAIL_KEY, data.email);
-            unlockSite();
-        } catch (err) {
-            showAuthMsg(err.message);
-        } finally {
-            btnVerifyOtp.disabled = false;
-            btnVerifyOtp.textContent = 'যাচাই করুন';
-        }
-    }
-
-    async function checkSession(token) {
-        try {
-            const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/check-session`, {
-                method: 'POST',
-                headers: edgeHeaders(),
-                body: JSON.stringify({ token })
-            });
-            if (!res.ok) return false;
-            const data = await res.json();
-            return !!data.valid;
-        } catch (err) {
-            return false;
-        }
-    }
-
-    function unlockSite() {
-        authGate.classList.add('hidden');
-        mainContent.classList.remove('hidden');
-        logoutBtn.classList.remove('hidden');
-        fetchFolders();
-    }
-
-    function logout() {
-        localStorage.removeItem(SESSION_KEY);
-        localStorage.removeItem(EMAIL_KEY);
-        location.reload();
-    }
-
-    btnSendOtp.addEventListener('click', sendOtp);
-    btnVerifyOtp.addEventListener('click', verifyOtp);
-    btnResendOtp.addEventListener('click', () => {
-        stepOtp.classList.add('hidden');
-        stepEmail.classList.remove('hidden');
-        authMsg.classList.add('hidden');
-        authOtpInput.value = '';
-    });
-    logoutBtn.addEventListener('click', logout);
-
-    // ---- শুরুতে: আগে থেকে সেশন (cache) আছে কিনা চেক করি ----
-    (async function initAuth() {
-        const token = localStorage.getItem(SESSION_KEY);
-        if (token) {
-            const valid = await checkSession(token);
-            if (valid) {
-                unlockSite();
-                return;
-            }
-            localStorage.removeItem(SESSION_KEY);
-            localStorage.removeItem(EMAIL_KEY);
-        }
-        // লগইন করা নেই — auth gate দেখাই, initial loader সরিয়ে দিই
-        authGate.classList.remove('hidden');
-        foldersReady = true;
-        tryHideInitialLoader();
-    })();
+    // Initialize
+    fetchFolders();
 </script>
 </body>
 </html>
