@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Encryption</title>
+    <style>
+        :root {
+            --bg: #eef1f6;
+            --panel: #ffffff;
+            --text: #1b2333;
+            --muted: #8a94a8;
+            --border: #d5dbe7;
+            --field: #f6f8fc;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-soft: #ecebff;
+            --danger: #c62828;
+            --danger-soft: #fdecec;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0d111b;
+                --panel: #161c2a;
+                --text: #e7eaf2;
+                --muted: #7d889e;
+                --border: #2a3448;
+                --field: #101523;
+                --accent: #7c75f5;
+                --accent-hover: #978ff8;
+                --accent-soft: #232046;
+                --danger: #ff7b7b;
+                --danger-soft: #3a1d22;
+            }
+        }
+
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Bengali", Arial, sans-serif;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+
+        .app { width: 100%; max-width: 920px; }
+
+        .bar { margin-bottom: 14px; }
+        .seg {
+            display: inline-flex;
+            gap: 2px;
+            padding: 3px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .seg button {
+            padding: 8px 18px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--muted);
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .seg button:hover { color: var(--text); }
+        .seg button[aria-selected="true"] {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .panes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .pane {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 360px;
+            padding: 16px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--field);
+            color: var(--text);
+            font: inherit;
+            font-size: 15px;
+        }
+        ::placeholder { color: var(--muted); opacity: 1; }
+
+        :is(button, input, textarea, a):focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .keyrow { display: flex; gap: 8px; }
+        .keyrow input { flex: 1; min-width: 0; }
+        .icon-btn {
+            flex: none;
+            width: 46px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--field);
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+        .icon-btn .slash {
+            stroke-dasharray: 26;
+            stroke-dashoffset: 26;
+            transition: stroke-dashoffset 0.25s ease;
+        }
+        .icon-btn .pupil {
+            transform-origin: 12px 12px;
+            transition: transform 0.25s ease;
+        }
+        .icon-btn.on { color: var(--accent); }
+        .icon-btn.on .slash { stroke-dashoffset: 0; }
+        .icon-btn.on .pupil { transform: scale(0.55); }
+
+        .primary {
+            display: block;
+            width: 100%;
+            padding: 13px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--accent);
+            color: #fff;
+            font: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .primary:hover:not(:disabled) { background: var(--accent-hover); }
+        .primary:disabled { opacity: 0.65; cursor: progress; }
+
+        .out-pane { justify-content: center; }
+        .empty { flex: 1; display: grid; place-items: center; color: var(--border); }
+        .error {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--danger-soft);
+            color: var(--danger);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 720px) {
+            .panes { grid-template-columns: 1fr; }
+            .pane { min-height: 0; }
+            .seg { display: flex; }
+            .seg button { flex: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            margin: -1px; padding: 0;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            border: 0;
+        }
+        #fileField { flex: 1; display: flex; flex-direction: column; min-height: 160px; }
+        .dropzone {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            background: var(--field);
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, background-color 0.15s;
+        }
+        .dropzone:hover, .dropzone.drag { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+        #fileInput:focus-visible + .dropzone { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+        .filecard {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--field);
+        }
+        .filecard svg { flex: none; color: var(--accent); }
+        .filecard .meta { flex: 1; min-width: 0; }
+        .filecard .name { font-weight: 600; overflow-wrap: anywhere; }
+        .filecard .size { font-size: 12px; color: var(--muted); }
+        .filecard .icon-btn { width: 34px; height: 34px; }
+        #resultFile { display: flex; flex-direction: column; gap: 12px; }
+    </style>
+</head>
+<body>
+
+<main class="app">
+    <nav class="bar">
+        <div class="seg" role="tablist" aria-label="Action">
+            <button type="button" role="tab" id="modeEncrypt" aria-selected="true">Encrypt</button>
+            <button type="button" role="tab" id="modeDecrypt" aria-selected="false">Decrypt</button>
+        </div>
+    </nav>
+
+    <div class="panes">
+        <!-- Input -->
+        <section class="pane">
+            <div id="fileField">
+                <input type="file" id="fileInput" class="sr-only" aria-label="File">
+                <label class="dropzone" id="dropzone" for="fileInput">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Drop a file or click</span>
+                </label>
+                <div class="filecard" id="selectedFile" hidden>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <div class="meta">
+                        <div class="name" id="selectedName"></div>
+                        <div class="size" id="selectedSize"></div>
+                    </div>
+                    <button type="button" class="icon-btn" id="removeFile" aria-label="Remove file">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="keyrow">
+                <input type="password" id="keyInput" placeholder="Key" aria-label="Key" autocomplete="off" spellcheck="false">
+                <button type="button" class="icon-btn" id="toggleKey" aria-label="Show key" aria-pressed="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle class="pupil" cx="12" cy="12" r="3"></circle>
+                        <path class="slash" d="M3 3l18 18"></path>
+                    </svg>
+                </button>
+            </div>
+            <button type="button" class="primary" id="actionBtn">Encrypt</button>
+        </section>
+
+        <!-- Output -->
+        <section class="pane out-pane" aria-live="polite">
+            <div class="empty" id="empty" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                </svg>
+            </div>
+            <div id="resultFile" hidden>
+                <div class="filecard">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <div class="meta">
+                        <div class="name" id="resultFileName"></div>
+                        <div class="size" id="resultFileSize"></div>
+                    </div>
+                </div>
+                <a class="primary" id="downloadLink" href="#">Download</a>
+            </div>
+            <div class="error" id="resultError" role="alert" hidden></div>
+        </section>
+    </div>
+</main>
+
+<script>
+    /* AES-256-GCM, key derived with PBKDF2-SHA256. Random salt and IV on every encryption;
+       GCM rejects wrong keys and altered data.
+       Packed layout: [1 byte version = 2][16 salt][12 IV][ciphertext + 16-byte tag]
+       Plaintext: [2 bytes name length][original name (UTF-8)][file bytes]
+       The original name and extension are stored encrypted inside the file. */
+    const VERSION_FILE = 2;
+    const MAX_FILE_BYTES = 100 * 1024 * 1024;
+
+    const SALT_LEN = 16;
+    const IV_LEN = 12;
+    const TAG_LEN = 16;
+    const HEADER_LEN = 1 + SALT_LEN + IV_LEN;
+    const PBKDF2_ITERATIONS = 200000;
+
+    const textEnc = new TextEncoder();
+    const textDec = new TextDecoder('utf-8', { fatal: true });
+
+    class CryptoError extends Error {
+        constructor(kind) { super(kind); this.kind = kind; }
+    }
+
+    async function deriveAesKey(passphrase, salt) {
+        const base = await crypto.subtle.importKey(
+            'raw', textEnc.encode(passphrase.normalize('NFC')), 'PBKDF2', false, ['deriveKey']
+        );
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+            base,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+    }
+
+    async function seal(version, plainBytes, passphrase) {
+        const salt = crypto.getRandomValues(new Uint8Array(SALT_LEN));
+        const iv = crypto.getRandomValues(new Uint8Array(IV_LEN));
+        const key = await deriveAesKey(passphrase, salt);
+        const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, plainBytes));
+        const packed = new Uint8Array(HEADER_LEN + ct.length);
+        packed[0] = version;
+        packed.set(salt, 1);
+        packed.set(iv, 1 + SALT_LEN);
+        packed.set(ct, HEADER_LEN);
+        return packed;
+    }
+
+    async function open(version, packed, passphrase) {
+        if (packed.length < HEADER_LEN + TAG_LEN || packed[0] !== version) throw new CryptoError('format');
+        const salt = packed.slice(1, 1 + SALT_LEN);
+        const iv = packed.slice(1 + SALT_LEN, HEADER_LEN);
+        const ct = packed.subarray(HEADER_LEN);
+        const key = await deriveAesKey(passphrase, salt);
+        try {
+            return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ct));
+        } catch (e) {
+            throw new CryptoError('auth');
+        }
+    }
+
+    async function encryptFileBytes(name, content, passphrase) {
+        const nameBytes = textEnc.encode(name);
+        if (nameBytes.length > 0xFFFF) throw new CryptoError('name');
+        const plain = new Uint8Array(2 + nameBytes.length + content.length);
+        plain[0] = nameBytes.length >> 8;
+        plain[1] = nameBytes.length & 0xFF;
+        plain.set(nameBytes, 2);
+        plain.set(content, 2 + nameBytes.length);
+        return seal(VERSION_FILE, plain, passphrase);
+    }
+
+    async function decryptFileBytes(packed, passphrase) {
+        const plain = await open(VERSION_FILE, packed, passphrase);
+        const nameLen = (plain[0] << 8) | plain[1];
+        if (2 + nameLen > plain.length) throw new CryptoError('format');
+        let name;
+        try { name = textDec.decode(plain.subarray(2, 2 + nameLen)); }
+        catch (e) { throw new CryptoError('format'); }
+        return { name: safeFileName(name), content: plain.subarray(2 + nameLen) };
+    }
+
+    function safeFileName(name) {
+        const cleaned = name
+            .replace(/[\u0000-\u001f\u007f]/g, '')
+            .split(/[\\/]/).pop()
+            .trim();
+        return cleaned && cleaned !== '.' && cleaned !== '..' ? cleaned : 'decrypted_file';
+    }
+
+    // index.jpg -> index.abid
+    function encryptedName(name) {
+        let base = name;
+        const dot = base.lastIndexOf('.');
+        if (dot > 0) base = base.slice(0, dot);
+        else if (dot === 0) base = 'file';
+        if (/\.tar$/i.test(base)) base = base.slice(0, -4);
+        return (base || 'file') + '.abid';
+    }
+
+    /* ====================== UI ====================== */
+    const $ = (id) => document.getElementById(id);
+    let mode = 'encrypt';   // 'encrypt' | 'decrypt'
+    let selectedFile = null;
+    let downloadUrl = null;
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function render() {
+        const enc = mode === 'encrypt';
+        $('modeEncrypt').setAttribute('aria-selected', enc);
+        $('modeDecrypt').setAttribute('aria-selected', !enc);
+        $('actionBtn').textContent = enc ? 'Encrypt' : 'Decrypt';
+        $('fileInput').accept = enc ? '' : '.abid';
+    }
+
+    function clearResult() {
+        $('empty').hidden = false;
+        $('resultFile').hidden = true;
+        $('resultError').hidden = true;
+        if (downloadUrl) {
+            URL.revokeObjectURL(downloadUrl);
+            downloadUrl = null;
+        }
+    }
+
+    function showError(message) {
+        clearResult();
+        $('empty').hidden = true;
+        $('resultError').textContent = message;
+        $('resultError').hidden = false;
+    }
+
+    function showResult(name, blob) {
+        clearResult();
+        $('empty').hidden = true;
+        downloadUrl = URL.createObjectURL(blob);
+        $('resultFileName').textContent = name;
+        $('resultFileSize').textContent = formatSize(blob.size);
+        const link = $('downloadLink');
+        link.href = downloadUrl;
+        link.download = name;
+        $('resultFile').hidden = false;
+    }
+
+    function errorMessage(e) {
+        switch (e && e.kind) {
+            case 'auth': return 'Wrong key or corrupted data.';
+            case 'format': return 'Not valid encrypted data.';
+            case 'name': return 'File name too long.';
+            default: return 'Something went wrong.';
+        }
+    }
+
+    async function run() {
+        const pass = $('keyInput').value;
+        if (!selectedFile) { showError('Choose a file.'); return; }
+        if (selectedFile.size > MAX_FILE_BYTES + 1024) { showError('File too large (max 100 MB).'); return; }
+        if (!pass) { showError('Enter a key.'); return; }
+
+        const btn = $('actionBtn');
+        const idleLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '…';
+        try {
+            const bytes = new Uint8Array(await selectedFile.arrayBuffer());
+            if (mode === 'encrypt') {
+                const packed = await encryptFileBytes(selectedFile.name, bytes, pass);
+                showResult(encryptedName(selectedFile.name), new Blob([packed], { type: 'application/octet-stream' }));
+            } else {
+                const out = await decryptFileBytes(bytes, pass);
+                showResult(out.name, new Blob([out.content], { type: 'application/octet-stream' }));
+            }
+        } catch (e) {
+            showError(errorMessage(e));
+        } finally {
+            btn.disabled = false;
+            btn.textContent = idleLabel;
+        }
+    }
+
+    function chooseFile(file) {
+        selectedFile = file || null;
+        $('selectedFile').hidden = !selectedFile;
+        $('dropzone').hidden = !!selectedFile;
+        if (selectedFile) {
+            $('selectedName').textContent = selectedFile.name;
+            $('selectedSize').textContent = formatSize(selectedFile.size);
+        }
+        clearResult();
+    }
+
+    /* ====================== Events ====================== */
+    $('modeEncrypt').addEventListener('click', () => { mode = 'encrypt'; chooseFile(null); render(); });
+    $('modeDecrypt').addEventListener('click', () => { mode = 'decrypt'; chooseFile(null); render(); });
+    $('actionBtn').addEventListener('click', run);
+    $('keyInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
+
+    $('toggleKey').addEventListener('click', () => {
+        const input = $('keyInput');
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        $('toggleKey').classList.toggle('on', show);
+        $('toggleKey').setAttribute('aria-pressed', show);
+        $('toggleKey').setAttribute('aria-label', show ? 'Hide key' : 'Show key');
+    });
+
+    $('fileInput').addEventListener('change', (e) => {
+        chooseFile(e.target.files[0]);
+        e.target.value = '';
+    });
+    $('removeFile').addEventListener('click', () => chooseFile(null));
+
+    const dz = $('dropzone');
+    ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dz.classList.add('drag');
+    }));
+    ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dz.classList.remove('drag');
+    }));
+    dz.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files.length) chooseFile(e.dataTransfer.files[0]);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
