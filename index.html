@@ -2,640 +2,262 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>My Repository Folders · Shofiqul Islam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Folders</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --mist: #eef0fb;
+            --paper: #ffffff;
+            --ink: #232a5c;
+            --muted: #5d648f;
+            --line: #cfd3ee;
+            --accent: #3ddc97;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--mist);
+            color: var(--ink);
             min-height: 100vh;
+            display: grid;
+            grid-template-columns: 280px 1fr;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        aside {
+            background: var(--ink);
+            color: var(--mist);
+            padding: 40px 28px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* Header */
-        .header-area {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+        .logo { width: 56px; height: 56px; }
 
-        h1 {
-            color: white;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-        }
-
-        /* search */
-        .search-container {
-            margin-bottom: 20px;
+        .search { position: relative; }
+        .search svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translateY(-50%);
+            color: #a9b0dc;
+            pointer-events: none;
         }
 
         #search-input {
             width: 100%;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 25px;
+            padding: 14px 18px 14px 46px;
             font-size: 16px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            color: var(--mist);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        #search-input::placeholder { color: #a9b0dc; }
+        #search-input:hover { border-color: rgba(255, 255, 255, 0.45); }
+        #search-input:focus-visible {
             outline: none;
+            color: var(--ink);
+            background: var(--paper);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.45);
         }
+        #search-input:focus-visible::placeholder { color: var(--muted); }
+        .search:focus-within svg { color: var(--ink); }
 
-        #search-input:focus {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-
-        /* folder grid */
-        ul {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            gap: 18px;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            margin-bottom: 30px;
-        }
-
-        /* folder card */
-        li {
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            min-height: 140px;
-            cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            background-color: #2d2b55;
-        }
-
-        li:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-        }
-
-        /* overlay for text readability */
-        .folder-content {
-            background: rgba(0, 0, 0, 0.55);
-            border-radius: 16px;
-            padding: 18px 20px;
-            width: 100%;
-            height: 100%;
-            transition: background 0.2s ease;
+        .contact {
+            margin-top: auto;
             display: flex;
             align-items: center;
-        }
-
-        li:hover .folder-content {
-            background: rgba(0, 0, 0, 0.65);
-        }
-
-        .folder-link {
-            text-decoration: none;
-            color: white;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 18px;
+            font-size: 16px;
             font-weight: 600;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .folder-icon {
-            font-size: 32px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-
-        .folder-info {
-            flex: 1;
-        }
-
-        .folder-name {
-            font-weight: 700;
-            font-size: 1.1rem;
-            word-break: break-word;
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-
-        .folder-desc {
-            opacity: 0.85;
-            font-weight: normal;
-            font-size: 0.75rem;
-            margin-top: 4px;
-            display: block;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #loading, #error {
-            text-align: center;
-            color: white;
-            font-size: 16px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .no-results {
-            text-align: center;
-            color: white;
-            font-size: 16px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            grid-column: 1 / -1;
-        }
-
-        .stats {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        /* Email button */
-        .email-footer {
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .email-me-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: #ffffff;
-            color: #667eea;
-            padding: 12px 32px;
-            border-radius: 50px;
+            color: var(--ink);
             text-decoration: none;
-            font-weight: 700;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: background 0.2s;
+        }
+        .contact svg { width: 20px; height: 20px; }
+        .contact:hover { background: #ffffff; }
+        .contact:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
+
+        main { padding: 40px 32px 64px; }
+
+        #folder-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 28px 24px;
         }
 
-        .email-me-btn:hover {
-            background: #f5f5ff;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-        }
-
-        .footer-note {
-            text-align: center;
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-            margin-top: 20px;
-            padding: 12px;
-        }
-
-        /* Loading overlays */
-        .loader-inner {
+        .tile {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 1.3rem;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 150px;
+            padding: 18px 22px;
+            color: #ffffff;
+            text-decoration: none;
+            background: var(--ink);
+            border-radius: 16px;
+            box-shadow: 0 6px 0 #141a3d, 0 10px 24px rgba(35, 42, 92, 0.25);
+            overflow-wrap: anywhere;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
         }
-
-        .loading-text {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.15rem;
-            max-width: 100vw;
-            padding: 0 1rem;
+        .tile:hover, .tile:focus-visible {
+            transform: translateY(-4px);
+            background: #313a7a;
+            box-shadow: 0 10px 0 #141a3d, 0 16px 28px rgba(35, 42, 92, 0.3);
+            outline: none;
         }
+        .tile:focus-visible { box-shadow: 0 0 0 3px var(--mist), 0 0 0 6px var(--ink); }
 
-        .letter {
-            font-size: clamp(2.6rem, 13vw, 6rem);
-            font-weight: 700;
-            display: inline-block;
-            line-height: 1;
-            font-family: 'Courier New', Consolas, Monaco, monospace;
-            color: #00ff88;
-            text-shadow: 0 0 18px #00ff88, 0 0 36px #00ff8877;
-            animation: glitchPulse 1.8s infinite ease-in-out;
-            position: relative;
-            will-change: transform, opacity;
+        .tile .icon { width: 60px; height: 60px; color: #ffffff; }
+        .tile .icon .fill { fill: var(--accent); }
+        .tile strong { font-size: 18px; line-height: 1.25; }
+
+        .hidden { display: none !important; }
+
+        #loading { display: flex; justify-content: center; padding: 48px; }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--line);
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
 
-        .letter:nth-child(1) { animation-delay: 0s; }
-        .letter:nth-child(2) { animation-delay: 0.2s; }
-        .letter:nth-child(3) { animation-delay: 0.4s; }
-        .letter:nth-child(4) { animation-delay: 0.6s; }
-
-        @keyframes glitchPulse {
-            0%   { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
-            12%  { opacity:1;   transform: translateY(-7px) skewX(-3deg) scale(1.03); text-shadow:3px 0 #ff0044,-3px 0 #00aaff,0 0 32px #00ff88; color:#00ff88; }
-            24%  { opacity:.55; transform: translateY(3px) skewX(2deg) scale(0.98);  text-shadow:-2px 0 #ff0044,2px 0 #00aaff,0 0 15px #00ff88; color:#00ffaa; }
-            40%  { opacity:1;   transform: translateY(-4px) skewX(0deg) scale(1.01); text-shadow:0 0 26px #00ff88,0 0 52px #00ff88; color:#00ff88; }
-            65%  { opacity:.45; transform: translateY(5px) skewX(-1deg) scale(0.99); text-shadow:0 0 10px #00ff88,0 0 20px #00ff8844; color:#00cc66; }
-            100% { opacity:.35; transform: translateY(0) skewX(0deg) scale(1);      text-shadow:0 0 8px #00ff88,0 0 16px #00ff8844; color:#00cc66; }
+        #error, .no-results {
+            padding: 24px;
+            background: var(--paper);
+            border-left: 6px solid var(--accent);
         }
+        .no-results { grid-column: 1 / -1; }
+        #error small { color: var(--muted); }
 
-        @media (prefers-reduced-motion: reduce) {
-            .letter { animation: none; opacity: 1; }
-        }
-
-        .progress-track {
-            width: min(65vw, 230px);
-            height: 3px;
-            background: #0f2a1e;
-            border-radius: 2px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #00cc66, #00ff88);
-            box-shadow: 0 0 10px #00ff88, 0 0 22px #00ff8877;
-            border-radius: 2px;
-            transition: width .3s cubic-bezier(.4,0,.2,1);
-        }
-
-        #initial-loader {
-            position: fixed;
-            inset: 0;
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-            opacity: 1;
-            transition: opacity .5s ease;
-        }
-
-        #initial-loader.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #folder-loader {
-            position: fixed;
-            inset: 0;
-            background: rgba(10,10,10,0.35);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999998;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .35s ease;
-        }
-
-        #folder-loader.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        @media (max-width: 600px) {
-            h1 { font-size: 1.8rem; }
-            ul { grid-template-columns: 1fr; }
-            .folder-content { padding: 14px 16px; }
-            .folder-icon { font-size: 28px; }
-            .folder-name { font-size: 1rem; }
+        @media (max-width: 760px) {
+            body { grid-template-columns: 1fr; }
+            aside { position: static; height: auto; padding: 28px 20px; }
+            main { padding: 36px 20px 48px; }
         }
     </style>
 </head>
 <body>
-
-<!-- Initial Page Entry Loader -->
-<div id="initial-loader" role="status" aria-label="Loading">
-    <div class="loader-inner">
-        <div class="loading-text">
-            <span class="letter">a</span>
-            <span class="letter">b</span>
-            <span class="letter">i</span>
-            <span class="letter">d</span>
+    <aside>
+        <svg class="logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M6 18a4 4 0 0 1 4-4h14l6 7h24a4 4 0 0 1 4 4v25a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z" fill="#3ddc97" stroke="#eef0fb"/></svg>
+        <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="text" id="search-input" placeholder="Search" autocomplete="off" aria-label="Search folders">
         </div>
-        <div class="progress-track">
-            <div class="progress-fill" id="initial-loader-fill"></div>
-        </div>
-    </div>
-</div>
 
-<!-- Folder Opening Loader -->
-<div id="folder-loader" role="status" aria-label="Opening folder">
-    <div class="loader-inner">
-        <div class="loading-text">
-            <span class="letter">a</span>
-            <span class="letter">b</span>
-            <span class="letter">i</span>
-            <span class="letter">d</span>
-        </div>
-        <div class="progress-track">
-            <div class="progress-fill" id="folder-loader-fill"></div>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="header-area">
-        <h1>📁 Document Folders</h1>
-    </div>
-
-    <div class="search-container">
-        <input 
-            type="text" 
-            id="search-input" 
-            placeholder="🔍 Search folders by name..."
-            autocomplete="off"
-        >
-    </div>
-
-    <div class="stats" id="stats"></div>
-    <div id="loading">⏳ Loading folders...</div>
-    <div id="error" class="hidden"></div>
-    <ul id="folder-list" class="hidden"></ul>
-
-    <div class="email-footer">
-        <a href="https://shofiqul5.github.io/#contact" class="email-me-btn" target="_blank" rel="noopener noreferrer">
-            Contact Me
+        <a class="contact" href="https://shofiqul5.github.io" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            Contact
         </a>
-    </div>
+    </aside>
 
-    <div class="footer-note">
-        ⚡ GitHub API · folders from /shofiqul5/top
-    </div>
-</div>
+    <main>
+        <div id="loading" role="status" aria-label="Loading"><span class="spinner"></span></div>
+        <div id="error" class="hidden"></div>
+        <div id="folder-list" class="hidden"></div>
+    </main>
 
-<script>
-    // Config
-    const username = 'shofiqul5';
-    const repo = 'top';
-    const excludedFolders = ['.github', '.git', 'css', 'images'];
-    const folderDescriptions = {};
+    <script>
+        // --- Configuration ---
+        const username = 'shofiqul5';
+        const repo = 'top';
+        const excludedFolders = ['.github', '.git', 'css', 'images'];
 
-    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
-    let allFolders = [];
-
-    // DOM Elements
-    const folderListEl = document.getElementById('folder-list');
-    const loadingEl = document.getElementById('loading');
-    const errorEl = document.getElementById('error');
-    const statsEl = document.getElementById('stats');
-    const searchInput = document.getElementById('search-input');
-
-    const initialLoader = document.getElementById('initial-loader');
-    const initialLoaderFill = document.getElementById('initial-loader-fill');
-    const folderLoader = document.getElementById('folder-loader');
-    const folderLoaderFill = document.getElementById('folder-loader-fill');
-
-    // Helper: Progress Fill Animation
-    function animateFill(fillEl, duration, onDone) {
-        const start = performance.now();
-        function frame(now) {
-            const elapsed = now - start;
-            const pct = Math.min(100, (elapsed / duration) * 100);
-            fillEl.style.width = pct + '%';
-            if (pct < 100) {
-                requestAnimationFrame(frame);
-            } else if (onDone) {
-                onDone();
-            }
-        }
-        requestAnimationFrame(frame);
-    }
-
-    // Initial loader controller
-    let foldersReady = false;
-    let initialFillDone = false;
-    const initialMinDuration = 800; // Quick initial load
-
-    function tryHideInitialLoader() {
-        if (foldersReady && initialFillDone) {
-            initialLoader.classList.add('hide');
-            initialLoader.addEventListener('transitionend', function () {
-                initialLoader.remove();
-            }, { once: true });
-        }
-    }
-
-    animateFill(initialLoaderFill, initialMinDuration, function () {
-        initialFillDone = true;
-        tryHideInitialLoader();
-    });
-
-    // FIXED: Folder click handler that works on all browsers/devices
-    function openFolderWithLoader(url) {
-        // 1. Open the real URL immediately, synchronously inside the click
-        //    handler. Browsers (especially mobile Safari/Chrome) only allow
-        //    window.open to bypass the popup blocker if it happens directly
-        //    inside the click event — any delay (like waiting for an
-        //    animation to finish) makes them block it or treat it as an
-        //    untrusted redirect.
-        const newTab = window.open(url, '_blank', 'noopener');
-
-        if (!newTab) {
-            // Popup blocked entirely (rare, but some browsers still do this)
-            // -> fall back to navigating the current tab so the user still
-            // reaches the folder.
-            window.location.href = url;
-            return;
-        }
-
-        // 2. Play the loader animation purely as visual feedback on THIS
-        //    page. It no longer controls navigation, so even if it doesn't
-        //    finish or the user closes it, the folder has already opened.
-        folderLoader.classList.add('active');
-        folderLoaderFill.style.width = '0%';
-        const duration = 600;
-
-        animateFill(folderLoaderFill, duration, function () {
-            folderLoader.classList.remove('active');
-        });
-    }
-
-    // Background Image Helper
-    function getFolderImageUrl(folderName) {
-        return `https://raw.githubusercontent.com/${username}/${repo}/main/${encodeURIComponent(folderName)}/folder-image.jpg`;
-    }
-
-    function applyFolderBackground(liElement, folderName) {
-        const imageUrl = getFolderImageUrl(folderName);
-        const fallbackColor = "#2d2b55";
-
-        liElement.style.backgroundColor = fallbackColor;
-        liElement.style.backgroundImage = "none";
-
-        const img = new Image();
-        img.onload = function() {
-            liElement.style.backgroundImage = `url('${imageUrl}')`;
-            liElement.style.backgroundSize = "cover";
-            liElement.style.backgroundPosition = "center";
-            liElement.style.backgroundColor = "transparent";
+        // Optional: Custom folder names/descriptions
+        const folderDescriptions = {
+            // 'folder-name': 'Description of this folder'
         };
-        img.onerror = function() {
-            liElement.style.backgroundColor = fallbackColor;
-            liElement.style.backgroundImage = "none";
-        };
-        img.src = imageUrl;
-    }
+        // --- End Configuration ---
 
-    // Card Builder
-    function createFolderCard(folder) {
-        const li = document.createElement('li');
-        const folderName = folder.name;
-        const description = folderDescriptions[folderName] || '';
+        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/`;
+        let allFolders = [];
 
-        applyFolderBackground(li, folderName);
+        async function fetchFolders() {
+            const folderList = document.getElementById('folder-list');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const searchInput = document.getElementById('search-input');
 
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'folder-content';
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-        const linkDiv = document.createElement('div');
-        linkDiv.className = 'folder-link';
-        linkDiv.setAttribute('role', 'link');
-        linkDiv.setAttribute('tabindex', '0');
+                const data = await response.json();
+                if (!Array.isArray(data)) throw new Error('Invalid data format received');
 
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'folder-icon';
-        iconSpan.textContent = '📂';
+                allFolders = data
+                    .filter(item => item.type === 'dir' && !excludedFolders.includes(item.name))
+                    .sort((a, b) => a.name.localeCompare(b.name));
 
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'folder-info';
+                loading.classList.add('hidden');
+                folderList.classList.remove('hidden');
+                renderFolders(allFolders);
 
-        const nameSpan = document.createElement('div');
-        nameSpan.className = 'folder-name';
-        nameSpan.textContent = folderName;
-        infoDiv.appendChild(nameSpan);
-
-        if (description) {
-            const descSpan = document.createElement('small');
-            descSpan.className = 'folder-desc';
-            descSpan.textContent = description;
-            infoDiv.appendChild(descSpan);
-        }
-
-        linkDiv.appendChild(iconSpan);
-        linkDiv.appendChild(infoDiv);
-        contentDiv.appendChild(linkDiv);
-        li.appendChild(contentDiv);
-
-        const folderUrl = `https://${username}.github.io/${repo}/${folderName}/`;
-
-        const openFolder = (e) => {
-            e.stopPropagation();
-            openFolderWithLoader(folderUrl);
-        };
-
-        li.addEventListener('click', openFolder);
-        li.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                openFolderWithLoader(folderUrl);
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase().trim();
+                    renderFolders(allFolders.filter(folder =>
+                        folder.name.toLowerCase().includes(term) ||
+                        (folderDescriptions[folder.name] &&
+                         folderDescriptions[folder.name].toLowerCase().includes(term))
+                    ));
+                });
+            } catch (err) {
+                console.error('Error fetching folders:', err);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+                error.innerHTML = `
+                    Failed to load<br>
+                    <small>${err.message}</small>
+                `;
             }
-        });
-
-        li.setAttribute('tabindex', '0');
-        li.setAttribute('aria-label', `Open folder ${folderName}`);
-
-        return li;
-    }
-
-    // Render Function
-    function renderFolders(folders) {
-        folderListEl.innerHTML = '';
-
-        if (folders.length === 0) {
-            folderListEl.innerHTML = '<div class="no-results">🔍 No folders found matching your search</div>';
-            return;
         }
 
-        folders.forEach(folder => {
-            const card = createFolderCard(folder);
-            folderListEl.appendChild(card);
-        });
-    }
+        function renderFolders(folders) {
+            const folderList = document.getElementById('folder-list');
+            folderList.innerHTML = '';
 
-    // FIXED: Global Search Handler
-    function handleSearch(e) {
-        const term = e.target.value.toLowerCase().trim();
-        const filtered = allFolders.filter(folder => 
-            folder.name.toLowerCase().includes(term) ||
-            (folderDescriptions[folder.name] && folderDescriptions[folder.name].toLowerCase().includes(term))
-        );
-        renderFolders(filtered);
-
-        if (term === '') {
-            statsEl.textContent = `📁 Found ${allFolders.length} folder${allFolders.length !== 1 ? 's' : ''}`;
-        } else {
-            statsEl.textContent = `🔍 Found ${filtered.length} folder${filtered.length !== 1 ? 's' : ''} matching "${term}"`;
-        }
-    }
-
-    // Attach search event listener ONCE globally
-    searchInput.addEventListener('input', handleSearch);
-
-    // Fetch Folders from API
-    async function fetchFolders() {
-        try {
-            const response = await fetch(apiUrl);
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+            if (folders.length === 0) {
+                folderList.innerHTML = '<div class="no-results">No results</div>';
+                return;
             }
 
-            const data = await response.json();
+            folders.forEach(item => {
+                const a = document.createElement('a');
+                a.className = 'tile';
+                a.href = `https://${username}.github.io/${repo}/${item.name}/`;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
 
-            if (!Array.isArray(data)) {
-                throw new Error('Invalid API response structure');
-            }
+                a.insertAdjacentHTML('beforeend', '<svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 18a4 4 0 0 1 4-4h14l6 7h24a4 4 0 0 1 4 4v25a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z" class="fill"/><path d="M6 30h52"/></svg>');
 
-            allFolders = data.filter(item => 
-                item.type === 'dir' && !excludedFolders.includes(item.name)
-            );
+                const name = document.createElement('strong');
+                name.textContent = item.name;
+                a.appendChild(name);
 
-            allFolders.sort((a, b) => a.name.localeCompare(b.name));
-
-            const count = allFolders.length;
-            statsEl.textContent = `📁 Found ${count} folder${count !== 1 ? 's' : ''}`;
-
-            loadingEl.classList.add('hidden');
-            folderListEl.classList.remove('hidden');
-
-            renderFolders(allFolders);
-
-            foldersReady = true;
-            tryHideInitialLoader();
-
-        } catch (err) {
-            console.error('Fetch error:', err);
-            loadingEl.classList.add('hidden');
-            errorEl.classList.remove('hidden');
-            errorEl.innerHTML = `
-                ❌ Failed to load folders<br>
-                <small>${err.message}</small><br>
-                <small>Ensure repository is public: ${username}/${repo}</small>
-            `;
-            foldersReady = true;
-            tryHideInitialLoader();
+                folderList.appendChild(a);
+            });
         }
-    }
 
-    // Initialize
-    fetchFolders();
-</script>
+        fetchFolders();
+    </script>
 </body>
 </html>
