@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folders</title>
+<style>
+  :root {
+    --bg: #0f1218;
+    --tile: #181d27;
+    --tile-hover: #212838;
+    --text: #e8ebf2;
+    --muted: #8a93a6;
+    --accent: #5b8cff;
+    --folder: #f2b63d;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f3f5f9;
+      --tile: #ffffff;
+      --tile-hover: #e9efff;
+      --text: #1b2130;
+      --muted: #6a7488;
+      --accent: #2f6fed;
+      --folder: #e9a400;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans Bengali", "Hind Siliguri", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 20px 16px 40px;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    min-height: 40px;
+  }
+  .back {
+    flex: none;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--tile);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.3rem;
+  }
+  .back:hover, .back:focus-visible { background: var(--tile-hover); outline: none; }
+  .crumbs {
+    color: var(--muted);
+    font-size: .95rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .crumbs::-webkit-scrollbar { display: none; }
+  .crumbs a { color: var(--muted); text-decoration: none; }
+  .crumbs a:hover { color: var(--accent); }
+  .crumbs b { color: var(--text); font-weight: 600; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 12px 18px;
+    background: var(--tile);
+    border-radius: 16px;
+    color: var(--text);
+    text-decoration: none;
+    text-align: center;
+    word-break: break-word;
+    transition: background .15s, transform .15s;
+  }
+  .tile:hover, .tile:focus-visible { background: var(--tile-hover); transform: translateY(-2px); outline: none; }
+  .tile svg { width: 52px; height: 52px; fill: var(--folder); }
+  .tile span { font-size: .98rem; font-weight: 500; }
+  .msg { color: var(--muted); padding: 30px 0; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <a class="back" id="back" href="../" hidden aria-label="Back">←</a>
+    <div class="crumbs" id="crumbs"></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+/* index.html নামে যে ফোল্ডারে রাখবেন, সেই ফোল্ডারের সাবফোল্ডার দেখাবে।
+   কাস্টম ডোমেইন হলে user ও repo লিখুন। */
+const CONFIG = {
+  user: "",
+  repo: "",
+  hideDotFolders: true,
+  hideFolders: []
+};
+
+(function () {
+  const grid = document.getElementById("grid");
+  const crumbsEl = document.getElementById("crumbs");
+  const backEl = document.getElementById("back");
+
+  let pathname = decodeURIComponent(location.pathname);
+  const lastSeg = pathname.split("/").filter(Boolean).pop() || "";
+  if (lastSeg.includes(".")) pathname = pathname.slice(0, pathname.lastIndexOf("/") + 1);
+  if (!pathname.endsWith("/")) pathname += "/";
+  const segments = pathname.split("/").filter(Boolean);
+  const baseUrl = location.origin + pathname.split("/").map(encodeURIComponent).join("/");
+
+  if (segments.length) backEl.hidden = false;
+  crumbsEl.innerHTML = segments.length
+    ? segments.map((s, i) => i === segments.length - 1 ? `<b>${esc(s)}</b>` : esc(s)).join(" / ")
+    : `<b>${esc(location.hostname)}</b>`;
+
+  const host = location.hostname;
+  const user = CONFIG.user || (host.endsWith(".github.io") ? host.split(".")[0] : "");
+  if (!user) return msg("CONFIG-এ user ও repo লিখুন");
+
+  const candidates = [];
+  if (CONFIG.repo) {
+    candidates.push({ repo: CONFIG.repo, path: segments });
+    if (segments[0] === CONFIG.repo) candidates.push({ repo: CONFIG.repo, path: segments.slice(1) });
+  } else {
+    candidates.push({ repo: user + ".github.io", path: segments });
+    if (segments.length) candidates.push({ repo: segments[0], path: segments.slice(1) });
+  }
+
+  async function load(c) {
+    const p = c.path.map(encodeURIComponent).join("/");
+    const url = `https://api.github.com/repos/${encodeURIComponent(user)}/${encodeURIComponent(c.repo)}/contents/${p}`;
+    const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+    if (res.status === 403 || res.status === 429) { const e = new Error("rate"); e.rate = true; throw e; }
+    if (!res.ok) return null;
+    const data = await res.json();
+    return Array.isArray(data) ? data : null;
+  }
+
+  const icon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z"/></svg>';
+
+  (async function () {
+    try {
+      let items = null;
+      for (const c of candidates) { items = await load(c); if (items) break; }
+      if (!items) return msg("ফোল্ডার পাওয়া যায়নি");
+
+      const dirs = items
+        .filter(i => i.type === "dir")
+        .map(i => i.name)
+        .filter(n => !(CONFIG.hideDotFolders && n.startsWith(".")))
+        .filter(n => !CONFIG.hideFolders.includes(n))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+
+      if (!dirs.length) return msg("খালি");
+      grid.innerHTML = dirs.map(n =>
+        `<a class="tile" href="${baseUrl}${encodeURIComponent(n)}/">${icon}<span>${esc(n)}</span></a>`
+      ).join("");
+    } catch (e) {
+      msg(e.rate ? "কিছুক্ষণ পরে আবার চেষ্টা করুন" : "লোড হয়নি");
+    }
+  })();
+
+  function msg(t) { grid.innerHTML = `<div class="msg" style="grid-column:1/-1">${t}</div>`; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+})();
+</script>
+</body>
+</html>
