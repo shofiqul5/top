@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src blob:; manifest-src 'self'; worker-src 'self'; base-uri 'none'">
+    <title>Authenticator</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0f7a4f">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Authenticator">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="tb" id="tb">
+      <div class="bar">
+        <div class="sr" id="srw" hidden>
+          <span class="si">⌕</span>
+          <input id="q" type="text" inputmode="search" placeholder="Search accounts" autocomplete="off">
+          <button id="qx" aria-label="Clear" hidden>✕</button>
+        </div>
+        <button class="ic" id="bset" aria-label="Settings">⚙</button>
+      </div>
+    </div>
+    <main id="list"></main>
+    <button class="fab" id="badd" aria-label="Add account">+</button>
+
+    <!-- Popup: add -->
+    <dialog id="add" class="ctr">
+      <button class="x" aria-label="Close">✕</button>
+      <div class="s">
+        <div class="tiles">
+          <button id="bcam"><span>📷</span>Scan</button>
+          <button id="bimg"><span>🖼</span>Image</button>
+          <button id="bfile"><span>📄</span>File</button>
+          <button id="bpaste"><span>📋</span>Paste</button>
+          <button id="bman"><span>🔑</span>Key</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Popup: ed -->
+    <dialog id="ed" class="ctr">
+      <button class="x" aria-label="Close">✕</button>
+      <div class="s">
+        <label for="fi">Issuer</label>
+        <input id="fi" autocomplete="off">
+        <label for="fn">Account</label>
+        <input id="fn" autocomplete="off">
+        <label for="fs">Secret key</label>
+        <div class="kw">
+          <input id="fs" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false">
+          <button type="button" class="eye" id="feye" aria-label="Show key" title="Show key"></button>
+        </div>
+        <input type="checkbox" id="fv" hidden>
+        <div class="row" id="fx">
+          <button id="fcp">Copy</button>
+          <button id="fchg">Change key</button>
+        </div>
+        <div class="g3">
+          <div>
+            <label for="fd">Digits</label>
+            <select id="fd">
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+            </select>
+          </div>
+          <div>
+            <label for="fp">Period</label>
+            <input id="fp" type="number" min="5" max="300">
+          </div>
+          <div>
+            <label for="fa">Algorithm</label>
+            <select id="fa">
+              <option>SHA1</option>
+              <option>SHA256</option>
+              <option>SHA512</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <button class="d" id="fdel">Delete</button>
+          <button class="p" id="fsave">Save</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Popup: cam -->
+    <dialog id="cam" class="ctr nx">
+      <div class="s">
+        <video id="vid" playsinline muted></video>
+        <div class="row">
+          <button id="ccam">Done</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Popup: ask -->
+    <dialog id="ask" class="ctr nx">
+      <div class="s">
+        <label id="askm"></label>
+        <input id="aski" type="password" autocomplete="off">
+        <div class="row">
+          <button id="askc">Cancel</button>
+          <button class="p" id="asko">OK</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Popup: set -->
+    <dialog id="set" class="ctr">
+      <button class="x" aria-label="Close">✕</button>
+      <div class="s">
+        <label class="sw">
+          <span>Encryption</span>
+          <input type="checkbox" id="senc">
+        </label>
+        <label>Theme</label>
+        <div class="seg" id="seg">
+          <button data-t="">System</button>
+          <button data-t="light">Light</button>
+          <button data-t="dark">Dark</button>
+          <button data-t="black">Black</button>
+        </div>
+        <div class="tiles" style="grid-template-columns:1fr 1fr;margin-top:14px">
+          <button id="sbak"><span>💾</span>Backup</button>
+          <button id="spass"><span>🔒</span>Change key</button>
+          <button id="shelp"><span>❓</span>How it works</button>
+          <a href="https://shofiqul5.github.io" target="_blank" rel="noopener"><span>✉</span>Contact</a>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Popup: help -->
+    <dialog id="help" class="ctr">
+      <button class="x" aria-label="Close">✕</button>
+      <div class="s">
+        <b>How it works</b>
+        <ol class="help">
+          <li>Add accounts by scanning a QR code, uploading an image or file, pasting a link, or typing the key.</li>
+          <li>Each code changes when its ring runs out. Tap a card to copy the code.</li>
+          <li>Everything stays on this device. Nothing is sent to a server.</li>
+          <li>Turn on Encryption to lock your data and backups with your own key. A lost key cannot be recovered.</li>
+          <li>Clearing browser data deletes your accounts, so download a backup.</li>
+        </ol>
+      </div>
+    </dialog>
+    <input type="file" id="fimg" accept="image/*" multiple hidden>
+    <input type="file" id="ffile" accept=".json,.txt,.csv,application/json,text/plain" multiple hidden>
+    <div id="toast" role="status"></div>
+    <script src="jsQR.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
